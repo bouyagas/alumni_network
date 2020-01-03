@@ -1,0 +1,47 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "An alumni network application ",
+  "main": "index.ts",
+  "repository": "https://github.com/bouyagas/alumni_network/tree/master/",
+  "author": "Mohamed Gassama",
+  "license": "MIT",
+  "scripts": {
+    "build-ts": "tsc",
+    "start": "npm run serve",
+    "serve": "node dist/index.js",
+    "watch-node": "nodemon dist/index.js",
+    "watch-ts": "tsc -w",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "test": "echo \"Success: no test specified\" && exit 0",
+    "watch": "npm run build-ts && concurrently 'npm:watch-ts' 'npm:watch-node'"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint"
+    ]
+  },
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/lodash": "^4.14.149",
+    "@types/mongoose": "^5.5.38",
+    "apollo-server": "^2.9.15",
+    "bcrypt": "^3.0.7",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.8.4",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4",
+    "validator": "^12.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "concurrently": "^5.0.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "lint-staged": "^10.0.0-beta.14",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1"
+  }
+}
