@@ -27,6 +27,8 @@
     "@types/mongoose": "^5.5.38",
     "apollo-server": "^2.9.15",
     "bcrypt": "^3.0.7",
+    "cuid": "^2.1.8",
+    "gravatar": "^1.8.0",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.4",
     "ts-node": "^8.5.4",
@@ -34,6 +36,8 @@
     "validator": "^12.1.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/node-fetch": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "concurrently": "^5.0.2",

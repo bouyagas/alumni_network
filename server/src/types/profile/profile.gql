@@ -1,0 +1,78 @@
+type Experience {
+  title: String!
+  company: String!
+  location: String!
+  from: String!
+  to: String!
+  current: String!
+  description: String!
+}
+
+type Education {
+  school: String!
+  degree: String!
+  fieldofstudy: String!
+  from: String!
+  to: String!
+  current: Boolean!
+  description: String!
+}
+
+type Social {
+  youtube: String
+  twitter: String
+  facebook: String
+  linkedin: String
+  instagram: String
+}
+
+type Profile {
+  user: User!
+  company: String!
+  website: String!
+  location: String!
+  status: String!
+  skills: [String!]!
+  bio: String!
+  githubusername: String!
+  experience: [Experience!]!
+  education: [Education!]!
+  social: [Social!]!
+}
+
+input NewProfileInput {
+  company: String!
+  website: String!
+  location: String!
+  status: String!
+  skills: [String!]!
+  bio: String!
+  githubusername: String!
+  experience: [Experience!]!
+  education: [Education!]!
+  social: [Social!]!
+}
+
+input UpdateProfileInput {
+  company: String!
+  website: String!
+  location: String!
+  status: String!
+  skills: [String!]!
+  bio: String!
+  githubusername: String!
+  experience: [Experience!]!
+  education: [Education!]!
+  social: [Social!]!
+}
+
+extend type Query {
+  profile: Profile!
+  profiles: [Profile!]!
+}
+
+extend type Mutation {
+  newProfile(input: NewProfileInput!): Profile!
+  updateProfile(input: UpdateProfileInput!): Profile!
+  removeProfile(id: ID!): Profile!
+}
