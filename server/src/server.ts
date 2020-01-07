@@ -24,12 +24,11 @@ export const start = async (): Promise<void> => {
     typeDefs: [rootSchema, ...schemaTypes],
     resolvers: merge({}, post, profile, user),
     async context({ req }) {
-      const user = await authenticate(req);
+      const user: any = await authenticate(req);
       if (!user) throw new AuthenticationError('you must be logged in');
       return { user };
     },
   });
-  ``;
 
   await connect(serverConfig.mongoDbUrl);
   const { url } = await server.listen({ port: serverConfig.port });
