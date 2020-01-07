@@ -1,9 +1,9 @@
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer, AuthenticationError } from 'apollo-server';
 import { loadTypeSchema } from './utils/schema';
 import { authenticate } from './utils/auth';
 import { merge } from 'lodash';
-import config from './config';
-import { connect } from './db';
+import { serverConfig } from './config';
+import { connect } from './config/db';
 import post from './types/post/post.resolvers';
 import profile from './types/profile/profile.resolvers';
 import user from './types/user/user.resolvers';
@@ -25,12 +25,14 @@ export const start = async (): Promise<void> => {
     resolvers: merge({}, post, profile, user),
     async context({ req }) {
       const user = await authenticate(req);
+      if (!user) throw new AuthenticationError('you must be logged in');
       return { user };
     },
   });
+  ``;
 
-  await connect(config.dbUrl);
-  const { url } = await server.listen({ port: config.port });
+  await connect(serverConfig.mongoDbUrl);
+  const { url } = await server.listen({ port: serverConfig.port });
 
-  console.log(`GQL server ready at ${url}`);
+  console.log(`GQL 🚀 Server ready at ${url}`);
 };

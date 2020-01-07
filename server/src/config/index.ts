@@ -1,10 +1,11 @@
 import { merge } from 'lodash';
+import config from 'config';
 import { BConfig } from '../interface';
 const env = process.env.NODE_ENV || 'development';
 
 const baseConfig: BConfig = {
-  dbUrl: '',
   env,
+  mongoDbUrl: '',
   isDev: env === 'development',
   isTest: env === 'testing',
   port: 7000,
@@ -19,14 +20,14 @@ let envConfig = {};
 switch (env) {
   case 'dev':
   case 'development':
-    envConfig = require('./dev').config;
+    envConfig = config.get('devConfig');
     break;
   case 'test':
   case 'testing':
-    envConfig = require('./testing').config;
+    envConfig = config.get('testConfig"');
     break;
   default:
-    envConfig = require('./dev').config;
+    envConfig = config.get('devConfig');
 }
 
-export default merge(baseConfig, envConfig);
+export const serverConfig = merge(baseConfig, envConfig);

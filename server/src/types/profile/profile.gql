@@ -32,7 +32,7 @@ type Profile {
   website: String!
   location: String!
   status: String!
-  skills: [String!]!
+  skills: [String]!
   bio: String!
   githubusername: String!
   experience: [Experience!]!
@@ -45,7 +45,7 @@ input NewProfileInput {
   website: String!
   location: String!
   status: String!
-  skills: [String!]!
+  skills: [String]!
   bio: String!
   githubusername: String!
   experience: [Experience!]!
@@ -58,7 +58,7 @@ input UpdateProfileInput {
   website: String!
   location: String!
   status: String!
-  skills: [String!]!
+  skills: [String]!
   bio: String!
   githubusername: String!
   experience: [Experience!]!

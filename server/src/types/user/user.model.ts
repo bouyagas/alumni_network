@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
 import bcrypt from 'bcrypt';
 
 export const roles = {
@@ -6,7 +7,7 @@ export const roles = {
   admin: 'admin',
 };
 
-const userSchema: mongoose.Schema<any> = new mongoose.Schema(
+const userSchema: mongoose.Schema<any> = new Schema(
   {
     name: {
       type: String,
@@ -42,28 +43,31 @@ const userSchema: mongoose.Schema<any> = new mongoose.Schema(
       unique: true,
     },
   },
+
   { timestamps: true }
 );
 
-userSchema.pre('save', function(next: any): any {
+userSchema.pre('save', (next: any): any => {
+  //@ts-ignore
   if (!this.isModified('password')) {
     return next();
   }
   //@ts-ignore
-  bcrypt.hash(this.password, 8, function(err: any, hash: string): any {
+  bcrypt.hash(this.password, 8, (err: any, hash: string): any => {
     if (err) {
       return next(err);
     }
-
+    //@ts-ignore
     this.password = hash;
     next();
   });
 });
 
-userSchema.methods.checkPassword = function(password: any) {
+userSchema.methods.checkPassword = (password: any): any => {
+  //@ts-ignore
   const passwordHash = this.password;
   return new Promise((resolve, reject) => {
-    bcrypt.compare(password, passwordHash, (err: any, same: any) => {
+    bcrypt.compare(password, passwordHash, (err: any, same: any): any => {
       if (err) {
         return reject(err);
       }

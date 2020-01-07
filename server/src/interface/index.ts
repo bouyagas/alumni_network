@@ -1,5 +1,5 @@
 export interface BConfig {
-  dbUrl: string;
+  mongoDbUrl: string;
   env: string;
   port: number;
   isTest: boolean;

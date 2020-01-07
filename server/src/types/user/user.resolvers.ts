@@ -1,5 +1,6 @@
 import { User } from './user.model';
 import { AuthenticationError } from 'apollo-server';
+import jsonwebtoken from 'jsonwebtoken';
 import { newApiKey } from '../../utils/auth';
 import { Document } from 'mongoose';
 

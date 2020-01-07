@@ -1,0 +1,16 @@
+{
+  "devConfig": {
+    "devSecret": {
+      "jwt": "devSecret"
+    },
+    "mongoDbUrl": "mongodb: //alumni_network_bouyagas:alumni_network_bouyagas1@ds239206.mlab.com:39206/alumni_network"
+  },
+  "testConfig": {
+    "testSecret": {
+      "jwt": "testSecret"
+    },
+    "mongoDbUrl": "mongodb: //localhost:27017/alumni_network"
+  },
+  "githubClientId": "",
+  "githubSecret": ""
+}
