@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const ProfileSchema = new Schema(
+const ProfileSchema: mongoose.Schema<any> = new Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
       ref: 'user',
+      type: Schema.Types.ObjectId,
     },
 
     company: {
@@ -21,13 +21,13 @@ const ProfileSchema = new Schema(
     },
 
     status: {
-      type: String,
       required: true,
+      type: String,
     },
 
     skills: {
-      type: [String],
       required: true,
+      type: [String],
     },
 
     bio: {
@@ -38,16 +38,53 @@ const ProfileSchema = new Schema(
       type: String,
     },
 
+    education: [
+      {
+        school: {
+          required: true,
+          type: String,
+        },
+
+        degree: {
+          required: true,
+          type: String,
+        },
+
+        fieldofstudy: {
+          required: true,
+          type: String,
+        },
+
+        from: {
+          required: true,
+          type: Date,
+        },
+
+        to: {
+          type: Date,
+        },
+
+        current: {
+          default: false,
+          type: Boolean,
+        },
+
+        description: {
+          type: String,
+        },
+      },
+    ],
+
     experience: [
       {
         title: {
-          type: String,
           required: true,
+          type: String,
         },
 
         company: {
-          type: String,
           required: true,
+          type: String,
         },
 
         location: {
@@ -55,8 +92,8 @@ const ProfileSchema = new Schema(
         },
 
         from: {
-          type: Date,
           required: true,
+          type: Date,
         },
 
         to: {
@@ -64,8 +101,8 @@ const ProfileSchema = new Schema(
         },
 
         current: {
-          type: Boolean,
           default: false,
+          type: Boolean,
         },
 
         description: {
@@ -73,42 +110,7 @@ const ProfileSchema = new Schema(
         },
       },
     ],
-    education: [
-      {
-        school: {
-          type: String,
-          required: true,
-        },
 
-        degree: {
-          type: String,
-          required: true,
-        },
-
-        fieldofstudy: {
-          type: String,
-          required: true,
-        },
-
-        from: {
-          type: Date,
-          required: true,
-        },
-
-        to: {
-          type: Date,
-        },
-
-        current: {
-          type: Boolean,
-          default: false,
-        },
-
-        description: {
-          type: String,
-        },
-      },
-    ],
     social: {
       youtube: {
         type: String,

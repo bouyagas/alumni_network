@@ -5,20 +5,20 @@ import bcrypt from 'bcrypt';
 const userSchema: mongoose.Schema<any> = new Schema(
   {
     username: {
-      type: String,
       required: true,
+      type: String,
     },
 
     email: {
-      type: String,
       required: true,
-      unique: true,
       trim: true,
+      type: String,
+      unique: true,
     },
 
     password: {
-      type: String,
       required: true,
+      type: String,
     },
 
     avatar: {
@@ -30,26 +30,25 @@ const userSchema: mongoose.Schema<any> = new Schema(
 );
 
 userSchema.pre('save', (next: any): any => {
-  let user = this;
-  //@ts-ignore
-  if (!user.isModified('password')) {
+  // @ts-ignore
+  if (!this.isModified('password')) {
     return next();
   }
-  let salt = bcrypt.genSalt(10);
-  //@ts-ignore
-  bcrypt.hash(user.password, salt, (err: any, hash: string): any => {
+  const salt = bcrypt.genSalt(10);
+  // @ts-ignore
+  bcrypt.hash(this.password, salt, (err: any, hash: string): any => {
     if (err) {
       return next(err);
     }
-    //@ts-ignore
-    user.password = hash;
+    // @ts-ignore
+    this.password = hash;
     next();
   });
 });
 
 userSchema.methods.checkPassword = (password: any): any => {
-  //@ts-ignore
-  let passwordHash: any = this.password;
+  // @ts-ignore
+  const passwordHash: any = this.password;
 
   return new Promise((resolve, reject): void => {
     bcrypt.compare(password, passwordHash, (err: any, same: any): any => {

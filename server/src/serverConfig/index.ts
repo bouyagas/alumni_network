@@ -1,13 +1,15 @@
 import { merge } from 'lodash';
-import config from 'config';
-import { BConfig } from '../interface';
-const env = process.env.NODE_ENV || 'development';
+import * as devConfig from './dev';
+import * as testConfig from './testing';
 
-const baseConfig: BConfig = {
+const env = process.env.NODE_ENV || 'development';
+let envConfig = {};
+
+const baseConfig = {
   env,
-  mongoDbUrl: '',
   isDev: env === 'development',
   isTest: env === 'testing',
+  mongoDbUrl: '',
   port: 7000,
   secrets: {
     jwt: process.env.JWT_SECRET,
@@ -15,19 +17,17 @@ const baseConfig: BConfig = {
   },
 };
 
-let envConfig = {};
-
 switch (env) {
   case 'dev':
   case 'development':
-    envConfig = config.get('devConfig');
+    envConfig = devConfig.config;
     break;
   case 'test':
   case 'testing':
-    envConfig = config.get('testConfig"');
+    envConfig = testConfig.config;
     break;
   default:
-    envConfig = config.get('devConfig');
+    envConfig = devConfig.config;
 }
 
 export const serverConfig = merge(baseConfig, envConfig);

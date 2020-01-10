@@ -5,10 +5,10 @@ export const connect = async (url: string = serverConfig.mongoDbUrl, opts = {}):
   try {
     await mongoose.connect(url, {
       ...opts,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       useCreateIndex: true,
       useFindAndModify: false,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
     console.log('MongoDB Connected...');
   } catch (err) {

@@ -2,46 +2,52 @@
   "name": "server",
   "version": "1.0.0",
   "description": "An alumni network application ",
-  "main": "index.ts",
+  "main": "gateway.ts",
   "repository": "https://github.com/bouyagas/alumni_network/tree/master/",
   "author": "Mohamed Gassama",
   "license": "MIT",
   "scripts": {
     "build-ts": "tsc",
-    "start": "npm run serve",
-    "serve": "node dist/index.js",
-    "watch-node": "nodemon dist/index.js",
+    "start": "yarn run serve",
+    "serve": "node dist/gateway.js",
+    "watch-node": "nodemon dist/gateway.js",
     "watch-ts": "tsc -w",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "echo \"Success: no test specified\" && exit 0",
-    "watch": "npm run build-ts && concurrently 'npm:watch-ts' 'npm:watch-node'"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint"
-    ]
+    "start-service-post": "nodemon dist/services/post/index.js",
+    "start-service-profile": "nodemon dist/services/profile/index.js",
+    "start-service-user": "nodemon dist/services/user/index.js",
+    "start-gateway": "concurrently 'yarn:watch-ts' 'yarn:watch-node'",
+    "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-service-*'",
+    "postinstall": "lerna bootstrap"
   },
   "dependencies": {
-    "@types/bcryptjs": "^2.4.2",
-    "@types/lodash": "^4.14.149",
-    "@types/mongoose": "^5.5.38",
+    "@apollo/federation": "^0.11.2",
+    "@apollo/gateway": "^0.11.6",
     "apollo-server": "^2.9.15",
     "bcrypt": "^3.0.7",
     "config": "^3.2.4",
-    "cuid": "^2.1.8",
+    "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.6",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
+    "lerna": "^3.20.2",
     "lodash": "^4.17.15",
+    "merge-graphql-schemas": "^1.7.6",
     "mongoose": "^5.8.4",
+    "rimraf": "^3.0.0",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4",
     "validator": "^12.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/config": "^0.0.36",
     "@types/gravatar": "^1.8.0",
     "@types/jsonwebtoken": "^8.3.5",
+    "@types/lodash": "^4.14.149",
+    "@types/mongoose": "^5.5.39",
     "@types/node-fetch": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
@@ -49,8 +55,10 @@
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "lint-staged": "^10.0.0-beta.14",
     "nodemon": "^2.0.2",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.1.0"
   }
 }

@@ -7,9 +7,9 @@
   },
 
   "runOnChangeOnly": false,
-  "watch": ["src/**/*.ts", "src/**/*.graphql", "src/**/*.gql"],
+  "watch": ["src/**/**/*.ts", "dist/service/index.js", "dist/gateway.js"],
   "env": {
     "NODE_ENV": "development"
   },
-  "ext": "ts,json,graphql"
+  "ext": "js,ts,json,gql"
 }

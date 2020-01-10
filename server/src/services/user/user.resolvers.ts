@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken';
+import { AuthenticationError } from 'apollo-server';
 import config from 'config';
 import gravatar from 'gravatar';
-import { AuthenticationError } from 'apollo-server';
+import jwt from 'jsonwebtoken';
 import { User } from './user.model';
 
 const me = async (_: any, args: string, ctx: any): Promise<void> => {
@@ -12,71 +12,78 @@ const me = async (_: any, args: string, ctx: any): Promise<void> => {
     return await ctx.user;
   } catch (err) {
     console.error(err.message);
-  }
-};
-
-const signup = async (_: any, args: any, ctx: any): Promise<void> => {
-  try {
-    let { email } = args;
-    let user = await User.findOne({ where: { email } });
-
-    if (user) {
-      throw new AuthenticationError('User already exists');
-    }
-
-    args.avatar = gravatar.url(email, {
-      s: '200',
-      r: 'pg',
-      d: 'mm',
-    });
-
-    user = await User.create({ ...args.input });
-
-    let payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      config.get('devConfig.devSecret.jwt'),
-      { expiresIn: 360000 },
-      (err: any, token: string): string => {
-        if (err) throw err;
-        return token;
-      }
-    );
-  } catch (err) {
-    console.error(err.message);
+    throw new AuthenticationError(err.message);
   }
 };
 
 const signin = async (_: any, args: any, ctx: any): Promise<void> => {
   try {
-    let { email } = args;
-    let user = await User.findOne({ where: { email } });
+    const { email } = args;
+    ctx.user = await User.findOne({ where: { email } });
 
-    if (!user) {
+    if (!ctx.user) {
       throw new AuthenticationError('No user with that email');
     }
 
-    let payload = {
+    const payload = {
       user: {
-        id: user.id,
+        id: ctx.user.id,
       },
     };
     jwt.sign(
       payload,
-      config.get('devConfig.devSecret.jwt'),
+      config.get('jwtSecret.jwt'),
       { expiresIn: 360000 },
       (err: any, token: string): string => {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
         return token;
       }
     );
   } catch (err) {
     console.error(err.message);
+    throw new AuthenticationError(err.message);
+  }
+};
+
+const signup = async (_: any, args: any, ctx: any): Promise<void> => {
+  try {
+    const { email } = args;
+    ctx.user = await User.findOne({ where: { email } });
+
+    if (ctx.user) {
+      throw new AuthenticationError('User already exists');
+    }
+
+    args.avatar = gravatar.url(email, {
+      d: 'mm',
+      r: 'pg',
+      s: '200',
+    });
+
+    ctx.user = await User.create({ ...args.input });
+
+    const payload = {
+      user: {
+        id: ctx.user.id,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      config.get('jwtSecret.jwt'),
+      { expiresIn: 360000 },
+      (err: any, token: string): string => {
+        if (err) {
+          throw err;
+        }
+        return token;
+      }
+    );
+  } catch (err) {
+    console.error(err.message);
+    throw new AuthenticationError(err.message);
   }
 };
 
@@ -92,17 +99,18 @@ const updateMe = async (_: any, args: any, ctx: any): Promise<void> => {
       .exec();
   } catch (err) {
     console.error(err.message);
+    throw new AuthenticationError(err.message);
   }
 };
 
-export default {
+export const resolver = {
   Query: {
     me,
   },
 
   Mutation: {
-    signup,
     signin,
+    signup,
     updateMe,
   },
 };
