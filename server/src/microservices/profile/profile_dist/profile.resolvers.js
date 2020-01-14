@@ -10,55 +10,67 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_1 = require("apollo-server");
-const profile = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (err) {
-        console.error(err.message);
-        throw new apollo_server_1.AuthenticationError(err.message);
-    }
-});
-const profiles = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (err) {
-        console.error(err.message);
-        throw new apollo_server_1.AuthenticationError(err.message);
-    }
-});
-const newProfile = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (err) {
-        console.error(err.message);
-        throw new apollo_server_1.AuthenticationError(err.message);
-    }
-});
-const removeProfile = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (err) {
-        console.error(err.message);
-        throw new apollo_server_1.AuthenticationError(err.message);
-    }
-});
-const updateProfile = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (err) {
-        console.error(err.message);
-        throw new apollo_server_1.AuthenticationError(err.message);
-    }
-});
+const profile_model_1 = require("./profile.model");
 exports.resolver = {
     Query: {
-        profile,
-        profiles,
+        profile: (_, { id }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const profile = yield profile_model_1.Profile.findOne({ id });
+                return profile
+                    .exec()
+                    .lean()
+                    .toObject();
+            }
+            catch (err) {
+                console.error(err.message);
+                throw new apollo_server_1.AuthenticationError(err.message);
+            }
+        }),
+        profiles: (_, __, ____) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const profile = yield profile_model_1.Profile.findOne({});
+                return profile
+                    .exec()
+                    .lean()
+                    .toObject();
+            }
+            catch (err) {
+                console.error(err.message);
+                throw new apollo_server_1.AuthenticationError(err.message);
+            }
+        }),
     },
     Mutation: {
-        newProfile,
-        removeProfile,
-        updateProfile,
+        newProfile: (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+            }
+            catch (err) {
+                console.error(err.message);
+                throw new apollo_server_1.AuthenticationError(err.message);
+            }
+        }),
+        removeProfile: (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+            }
+            catch (err) {
+                console.error(err.message);
+                throw new apollo_server_1.AuthenticationError(err.message);
+            }
+        }),
+        updateProfile: (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+            }
+            catch (err) {
+                console.error(err.message);
+                throw new apollo_server_1.AuthenticationError(err.message);
+            }
+        }),
+    },
+    User: {
+        profile: (user) => __awaiter(void 0, void 0, void 0, function* () { }),
+    },
+    Profile: {
+        user: (profile) => __awaiter(void 0, void 0, void 0, function* () { }),
     },
 };
 //# sourceMappingURL=profile.resolvers.js.map

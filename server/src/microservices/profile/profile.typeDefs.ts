@@ -15,9 +15,17 @@ export const typeDefs = gql`
   extend type User @key(fields: "id") {
     id: ID! @external
     username: String! @external
-    profile: Profile!
+    profile: Profile
   }
   scalar Date
+  enum Status {
+    Junior_Developer
+    Senior_Developer
+    Student
+    Instructor
+    Manager
+    Other
+  }
 
   type Education {
     school: String!
@@ -53,12 +61,12 @@ export const typeDefs = gql`
     company: String!
     website: String!
     location: String!
-    status: String!
+    status: Status!
     skills: [String]!
     bio: String!
     githubusername: String!
-    experience: [Experience!]!
-    education: [Education!]!
+    experience: [Experience]!
+    education: [Education]!
     social: [Social!]!
   }
 
