@@ -51,26 +51,25 @@ export const resolver = {
       }
     },
 
-    signup: async (_: any, args: any, ctx: any): Promise<void> => {
+    signup: async (_: any, { username, email, password }: any, ctx: any): Promise<void> => {
       try {
-        const { email } = args;
-        ctx.user = await User.findOne({ where: { email } });
+        let user = await User.findOne({ where: { email } });
 
-        if (ctx.user) {
+        if (user) {
           throw new AuthenticationError('User already exists');
         }
 
-        args.avatar = gravatar.url(email, {
+        const avatar = gravatar.url(email, {
           d: 'mm',
           r: 'pg',
           s: '200',
         });
 
-        ctx.user = await User.create({ ...args.input });
+        user = await User.create({ username, email, password, avatar });
 
         const payload = {
           user: {
-            id: ctx.user.id,
+            id: user.id,
           },
         };
 
