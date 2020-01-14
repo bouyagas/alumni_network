@@ -1,0 +1,17 @@
+{
+  "name": "profile",
+  "version": "1.0.0",
+  "description": "profile service",
+  "main": "index.ts",
+  "author": "Mohamed Gassama",
+  "license": "MIT",
+  "scripts": {
+    "start": "tsc && node profile_dist/index.js"
+  },
+  "dependencies": {
+    "@apollo/federation": "^0.11.3",
+    "apollo-server": "^2.9.16",
+    "graphql": "^14.5.8",
+    "typescript": "^3.8.0-dev.20200114"
+  }
+}

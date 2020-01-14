@@ -1,0 +1,16 @@
+{
+  "name": "post",
+  "version": "1.0.0",
+  "description": "post sevice ",
+  "main": "index.ts",
+  "author": "Mohamed Gassama",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.ts"
+  },
+  "dependencies": {
+    "@apollo/federation": "^0.11.2",
+    "apollo-server": "^2.9.15",
+    "graphql": "^14.5.8"
+  }
+}
