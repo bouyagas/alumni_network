@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+
+const Schema = mongoose.Schema;
 
 const userSchema: mongoose.Schema<any> = new Schema(
   {
@@ -29,32 +30,32 @@ const userSchema: mongoose.Schema<any> = new Schema(
   { timestamps: true }
 );
 
-userSchema.pre('save', (next: any): any => {
-  // @ts-ignore
+userSchema.set('toObject', { getters: true, virtuals: true });
+
+userSchema.pre('save', async function(this: any, next: () => {}) {
   if (!this.isModified('password')) {
     return next();
   }
-  const salt = bcrypt.genSalt(10);
-  // @ts-ignore
-  bcrypt.hash(this.password, salt, (err: any, hash: string): any => {
+
+  const salt = await bcrypt.genSalt(10);
+  bcrypt.hash(this.password, salt, (err, hash) => {
     if (err) {
+      // @ts-ignore
       return next(err);
     }
-    // @ts-ignore
     this.password = hash;
     next();
   });
 });
 
-userSchema.methods.checkPassword = (password: any): any => {
-  // @ts-ignore
-  const passwordHash: any = this.password;
-
-  return new Promise((resolve, reject): void => {
-    bcrypt.compare(password, passwordHash, (err: any, same: any): any => {
+userSchema.methods.checkPassword = function(this: any, password: string) {
+  const passwordHash = this.password;
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, passwordHash, (err, same) => {
       if (err) {
         return reject(err);
       }
+
       resolve(same);
     });
   });
