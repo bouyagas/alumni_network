@@ -6,12 +6,13 @@
   "author": "Mohamed Gassama",
   "license": "MIT",
   "scripts": {
-    "start": "node- index.ts"
+    "start": "node-ts index.ts"
   },
   "dependencies": {
     "@apollo/federation": "^0.11.3",
     "apollo-server": "^2.9.16",
-    "graphql": "^14.5.8"
+    "graphql": "^14.5.8",
+    "typescript": "^3.8.0-dev.20200114"
   },
   "devDependencies": {
     "ts-node": "^8.6.2"
