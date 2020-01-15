@@ -106,4 +106,10 @@ export const resolver = {
       }
     },
   },
+
+  User: {
+    __resolveReference(user: any) {
+      return User.findById(user.id);
+    },
+  },
 };
