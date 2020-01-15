@@ -20,7 +20,7 @@ export const typeDefs = gql`
     id: ID! @external
     username: String! @external
     avatar: String @external
-    profile: Profile
+    profiles: [Profile]!
   }
 
   scalar Date

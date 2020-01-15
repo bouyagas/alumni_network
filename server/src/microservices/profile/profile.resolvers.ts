@@ -167,8 +167,10 @@ export const resolver = {
   },
 
   User: {
-    profile: async (user: any, __: any, ___: any): Promise<void> => {
+    profiles: async (user: any, __: any, ctx: any): Promise<any> => {
       try {
+        const profiles = await Profile.find({});
+        return profiles.filter((profile: any) => profile.user.id === user.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -177,31 +179,38 @@ export const resolver = {
   },
 
   Profile: {
-    education: async (profile: any, __: any, ___: any): Promise<void> => {
+    education: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
+        const educations = await Education.find({});
+        return educations.filter((education: any) => education.id === profile.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
 
-    experience: async (profile: any, __: any, ___: any): Promise<void> => {
+    experience: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
+        const experiences = await Experience.find({});
+        return experiences.filter((experience: any) => experience.id === profile.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
 
-    social: async (profile: any, __: any, ___: any): Promise<void> => {
+    social: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
+        const socials = await Social.find({});
+        return socials.filter((social: any) => social.id === profile.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    user: async (profile: any, __: any, ___: any): Promise<void> => {
+    user: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
+        return { __typename: 'User', id: profile.user.id };
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
