@@ -1,14 +1,16 @@
 import { AuthenticationError } from 'apollo-server';
+import { Education } from './profile.model';
+import { Experience } from './profile.model';
+import { Social } from './profile.model';
 import { Profile } from './profile.model';
 
 export const resolver = {
   Query: {
-    profile: async (_: any, ___: any, { user }: any): Promise<any> => {
+    profile: async (_: any, __: any, ctx: any): Promise<any> => {
       try {
-        const profile: any = await Profile.findOne({ user: user.id }).populate('user', [
-          'username',
-          'avatar',
-        ]);
+        const profile: any = await Profile.findOne({
+          user: ctx.user.id,
+        }).populate('user', ['username', 'avatar']);
         if (!profile) {
           throw new AuthenticationError('There is no profile for this user');
         }
@@ -22,7 +24,7 @@ export const resolver = {
       }
     },
 
-    profiles: async (_: any, __: any, ____: any): Promise<any> => {
+    profiles: async (_: any, __: any, ___: any): Promise<any> => {
       try {
         const profile: any = await Profile.findOne({}).populate('user', ['username', 'avatar']);
         return profile
@@ -35,22 +37,48 @@ export const resolver = {
       }
     },
 
-    education: async (_: any, __: any, ____: any): Promise<any> => {
+    education: async (_: any, __: any, ___: any): Promise<any> => {
       try {
+        const education: any = await Education.find({});
+        if (!education) {
+          throw new AuthenticationError('There is no profile for this user');
+        }
+        return education
+          .exec()
+          .lean()
+          .toObject();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    experience: async (_: any, __: any, ____: any): Promise<any> => {
+
+    experience: async (_: any, __: any, ___: any): Promise<any> => {
       try {
+        const experience: any = await Experience.find({});
+        if (!experience) {
+          throw new AuthenticationError('There is no profile for this user');
+        }
+        return experience
+          .exec()
+          .lean()
+          .toObject();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    social: async (_: any, __: any, ____: any): Promise<any> => {
+
+    social: async (_: any, __: any, { ctx }: any): Promise<any> => {
       try {
+        const social: any = await Social.find({});
+        if (!social) {
+          throw new AuthenticationError('There is no profile for this user');
+        }
+        return social
+          .exec()
+          .lean()
+          .toObject();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -113,7 +141,7 @@ export const resolver = {
       }
     },
 
-    updateAndCreateEducation: async (_: any, __: any, ___: any) => {
+    updateAndCreateEducation: async (_: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -121,7 +149,7 @@ export const resolver = {
       }
     },
 
-    updateAndCreateEexperience: async (_: any, __: any, ___: any) => {
+    updateAndCreateEexperience: async (_: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -129,7 +157,7 @@ export const resolver = {
       }
     },
 
-    updateAndCreateSocial: async (profile: any, __: any, ___: any) => {
+    updateAndCreateSocial: async (profile: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -139,7 +167,7 @@ export const resolver = {
   },
 
   User: {
-    profile: async (user: any, __: any, ___: any) => {
+    profile: async (user: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -149,7 +177,7 @@ export const resolver = {
   },
 
   Profile: {
-    education: async (profile: any, __: any, ___: any) => {
+    education: async (profile: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -157,7 +185,7 @@ export const resolver = {
       }
     },
 
-    experience: async (profile: any, __: any, ___: any) => {
+    experience: async (profile: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
@@ -165,14 +193,14 @@ export const resolver = {
       }
     },
 
-    social: async (profile: any, __: any, ___: any) => {
+    social: async (profile: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    user: async (profile: any, __: any, ___: any) => {
+    user: async (profile: any, __: any, ___: any): Promise<void> => {
       try {
       } catch (err) {
         console.error(err.message);
