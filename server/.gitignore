@@ -36,7 +36,7 @@ bower_components
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
-dist/
+dist
 
 # Dependency directories
 node_modules/
@@ -58,4 +58,8 @@ yarn.lock
 # environment variables
 .env
 
-config/
+./config
+
+./src/microservices/user_dist
+./src/microservices/post_dist
+./src/microservices/profile_dist
