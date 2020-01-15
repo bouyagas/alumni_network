@@ -1,11 +1,10 @@
 import * as mongoose from 'mongoose';
-const Schema = mongoose.Schema;
-
-const ProfileSchema: mongoose.Schema<any> = new Schema(
+const ProfileSchema: mongoose.Schema<any> = new mongoose.Schema(
   {
     user: {
       ref: 'user',
-      type: Schema.Types.ObjectId,
+      required: true,
+      type: mongoose.Schema.Types.ObjectId,
     },
 
     company: {
@@ -44,7 +43,7 @@ const ProfileSchema: mongoose.Schema<any> = new Schema(
       {
         ref: 'education',
         required: true,
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
       },
     ],
 
@@ -52,22 +51,21 @@ const ProfileSchema: mongoose.Schema<any> = new Schema(
       {
         ref: 'experience',
         required: true,
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
       },
     ],
 
     social: {
       ref: 'social',
       required: true,
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
     },
   },
   { timestamps: true }
 );
 
-mongoose.model(
-  'education',
-  new Schema({
+const EducationSchema: mongoose.Schema<any> = new mongoose.Schema(
+  {
     school: {
       required: true,
       type: String,
@@ -100,11 +98,11 @@ mongoose.model(
     description: {
       type: String,
     },
-  })
+  },
+  { timestamps: true }
 );
-mongoose.model(
-  'experience',
-  new Schema({
+const ExperienceSchema: mongoose.Schema<any> = new mongoose.Schema(
+  {
     title: {
       required: true,
       type: String,
@@ -136,11 +134,12 @@ mongoose.model(
     description: {
       type: String,
     },
-  })
+  },
+  { timestamps: true }
 );
-mongoose.model(
-  'social',
-  new Schema({
+
+const SocialSchema: mongoose.Schema<any> = new mongoose.Schema(
+  {
     youtube: {
       type: String,
     },
@@ -160,7 +159,23 @@ mongoose.model(
     instagram: {
       type: String,
     },
-  })
+  },
+  { timestamps: true }
 );
+
+EducationSchema.set('toObject', { getters: true, virtuals: true });
+export const Education: mongoose.Model<mongoose.Document> = mongoose.model(
+  'education',
+  EducationSchema
+);
+
+ExperienceSchema.set('toObject', { getters: true, virtuals: true });
+export const Experience: mongoose.Model<mongoose.Document> = mongoose.model(
+  'experience',
+  ExperienceSchema
+);
+SocialSchema.set('toObject', { getters: true, virtuals: true });
+export const Social: mongoose.Model<mongoose.Document> = mongoose.model('social', SocialSchema);
+
 ProfileSchema.set('toObject', { getters: true, virtuals: true });
 export const Profile: mongoose.Model<mongoose.Document> = mongoose.model('profile', ProfileSchema);

@@ -1,23 +1,30 @@
 import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
-  extend type Query {
+  type Query {
     profile: Profile!
-    profiles: [Profile!]!
+    profiles: [Profile]!
+    education: Education
+    experience: Experience
+    social: Social
   }
 
-  extend type Mutation {
-    newProfile(input: NewProfileInput!): Profile!
-    updateProfile(input: UpdateProfileInput!): Profile!
-    removeProfile(id: ID!): Profile!
+  type Mutation {
+    updateAndCreateProfile(input: UpdateAndCreateProfileInput!): Profile!
+    updateAndCreateEducation(input: UpdateAndCreateEducationInput!): Education!
+    updateAndCreateExperience(input: UpdateAndCreateExperienceInput): Experience!
+    updateAndCreateSocial(input: UpdateAndCreateSocialInput): Social!
   }
 
   extend type User @key(fields: "id") {
     id: ID! @external
     username: String! @external
+    avatar: String @external
     profile: Profile
   }
+
   scalar Date
+
   enum Status {
     Junior_Developer
     Senior_Developer
@@ -58,39 +65,39 @@ export const typeDefs = gql`
   type Profile @key(fields: "id") {
     id: ID!
     user: User! @provides(fields: "username")
-    company: String!
-    website: String!
-    location: String!
+    company: String
+    website: String
+    location: String
     status: Status!
-    skills: [String]!
-    bio: String!
-    githubusername: String!
-    experience: [Experience]!
-    education: [Education]!
+    skills: [String!]!
+    bio: String
+    githubusername: String
+    experience: [Experience!]!
+    education: [Education!]!
     social: [Social!]!
   }
 
-  input EducationInput {
+  input UpdateAndCreateEducationInput {
     school: String!
     degree: String!
     fieldofstudy: String!
     from: String!
-    to: String!
-    current: Boolean!
+    to: String
+    current: Boolean
     description: String!
   }
 
-  input ExperienceInput {
+  input UpdateAndCreateExperienceInput {
     title: String!
     company: String!
-    location: String!
+    location: String
     from: String!
-    to: String!
-    current: String!
-    description: String!
+    to: String
+    current: Boolean
+    description: String
   }
 
-  input SocialInput {
+  input UpdateAndCreateSocialInput {
     youtube: String
     twitter: String
     facebook: String
@@ -98,7 +105,7 @@ export const typeDefs = gql`
     instagram: String
   }
 
-  input NewProfileInput {
+  input UpdateAndCreateProfileInput {
     company: String!
     website: String!
     location: String!
@@ -106,21 +113,5 @@ export const typeDefs = gql`
     skills: [String]!
     bio: String!
     githubusername: String!
-    experience: [EducationInput!]!
-    education: [EducationInput!]!
-    social: [SocialInput!]!
-  }
-
-  input UpdateProfileInput {
-    company: String!
-    website: String!
-    location: String!
-    status: String!
-    skills: [String]!
-    bio: String!
-    githubusername: String!
-    experience: [EducationInput!]!
-    education: [EducationInput!]!
-    social: [SocialInput!]!
   }
 `;
