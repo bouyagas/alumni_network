@@ -34,18 +34,15 @@ userSchema.set('toObject', { getters: true, virtuals: true });
 
 userSchema.pre('save', async function(this: any, next: () => {}) {
   if (!this.isModified('password')) {
-    return next();
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  bcrypt.hash(this.password, salt, (err, hash) => {
-    if (err) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    } catch (err) {
       // @ts-ignore
-      return next(err);
+      next(err);
     }
-    this.password = hash;
-    next();
-  });
+  }
+  next();
 });
 
 userSchema.methods.checkPassword = function(this: any, password: string) {

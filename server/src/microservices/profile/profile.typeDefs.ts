@@ -4,16 +4,14 @@ export const typeDefs = gql`
   type Query {
     profile: Profile!
     profiles: [Profile]!
-    education: Education
-    experience: Experience
-    social: Social
+    education: [Education]!
+    experience: [Experience]!
   }
 
   type Mutation {
     updateAndCreateProfile(input: UpdateAndCreateProfileInput!): Profile!
-    updateAndCreateEducation(input: UpdateAndCreateEducationInput!): Education!
-    updateAndCreateExperience(input: UpdateAndCreateExperienceInput): Experience!
-    updateAndCreateSocial(input: UpdateAndCreateSocialInput): Social!
+    createEducation(input: CreateEducationInput!): Education!
+    createExperience(input: CreateExperienceInput): Experience!
   }
 
   extend type User @key(fields: "id") {
@@ -55,11 +53,11 @@ export const typeDefs = gql`
   }
 
   type Social {
-    youtube: String
-    twitter: String
+    instagram: String
     facebook: String
     linkedin: String
-    instagram: String
+    twitter: String
+    youtube: String
   }
 
   type Profile @key(fields: "id") {
@@ -72,12 +70,12 @@ export const typeDefs = gql`
     skills: [String!]!
     bio: String
     githubusername: String
-    experience: [Experience!]!
-    education: [Education!]!
-    social: [Social!]!
+    experience: [Experience]!
+    education: [Education]!
+    social: [Social]!
   }
 
-  input UpdateAndCreateEducationInput {
+  input CreateEducationInput {
     school: String!
     degree: String!
     fieldofstudy: String!
@@ -87,7 +85,7 @@ export const typeDefs = gql`
     description: String!
   }
 
-  input UpdateAndCreateExperienceInput {
+  input CreateExperienceInput {
     title: String!
     company: String!
     location: String
@@ -98,11 +96,11 @@ export const typeDefs = gql`
   }
 
   input UpdateAndCreateSocialInput {
-    youtube: String
-    twitter: String
+    instagram: String
     facebook: String
     linkedin: String
-    instagram: String
+    twitter: String
+    youtube: String
   }
 
   input UpdateAndCreateProfileInput {
@@ -113,5 +111,6 @@ export const typeDefs = gql`
     skills: [String]!
     bio: String!
     githubusername: String!
+    social: UpdateAndCreateSocialInput
   }
 `;

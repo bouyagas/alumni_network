@@ -1,15 +1,12 @@
 import { AuthenticationError } from 'apollo-server';
-import { Education } from './profile.model';
-import { Experience } from './profile.model';
-import { Social } from './profile.model';
 import { Profile } from './profile.model';
 
 export const resolver = {
   Query: {
-    profile: async (_: any, __: any, ctx: any): Promise<any> => {
+    profile: async (_: any, __: any, { user }: any): Promise<any> => {
       try {
         const profile: any = await Profile.findOne({
-          user: ctx.user.id,
+          user: user.id,
         }).populate('user', ['username', 'avatar']);
         if (!profile) {
           throw new AuthenticationError('There is no profile for this user');
@@ -36,60 +33,25 @@ export const resolver = {
         throw new AuthenticationError(err.message);
       }
     },
-
-    education: async (_: any, __: any, ___: any): Promise<any> => {
-      try {
-        const education: any = await Education.find({});
-        if (!education) {
-          throw new AuthenticationError('There is no profile for this user');
-        }
-        return education
-          .exec()
-          .lean()
-          .toObject();
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    experience: async (_: any, __: any, ___: any): Promise<any> => {
-      try {
-        const experience: any = await Experience.find({});
-        if (!experience) {
-          throw new AuthenticationError('There is no profile for this user');
-        }
-        return experience
-          .exec()
-          .lean()
-          .toObject();
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    social: async (_: any, __: any, { ctx }: any): Promise<any> => {
-      try {
-        const social: any = await Social.find({});
-        if (!social) {
-          throw new AuthenticationError('There is no profile for this user');
-        }
-        return social
-          .exec()
-          .lean()
-          .toObject();
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
   },
 
   Mutation: {
     updateAndCreateProfile: async (
       _: any,
-      { company, website, location, bio, status, githubusername, skills }: any,
+      {
+        company,
+        website,
+        location,
+        bio,
+        status,
+        githubusername,
+        skills,
+        youtube,
+        facebook,
+        twitter,
+        instagram,
+        linkedin,
+      }: any,
       { user }: any
     ): Promise<any> => {
       const profileFields: any = {};
@@ -122,6 +84,23 @@ export const resolver = {
       if (skills) {
         profileFields.skills = skills.split(',').map((skill: any) => skill.trim());
       }
+
+      profileFields.social = {};
+      if (youtube) {
+        profileFields.social.youtube = youtube;
+      }
+      if (twitter) {
+        profileFields.social.twitter = twitter;
+      }
+      if (facebook) {
+        profileFields.social.facebook = facebook;
+      }
+      if (linkedin) {
+        profileFields.social.linkedin = linkedin;
+      }
+      if (instagram) {
+        profileFields.social.instagram = instagram;
+      }
       try {
         let profile = await Profile.findOne({ user: user.id });
         if (profile) {
@@ -141,24 +120,50 @@ export const resolver = {
       }
     },
 
-    updateAndCreateEducation: async (_: any, __: any, ___: any): Promise<void> => {
+    createEducation: async (
+      _: any,
+      { current, degree, description, fieldofstudy, from, school, to }: any,
+      { user }: any
+    ): Promise<any> => {
+      const newEdu = {
+        current,
+        degree,
+        description,
+        fieldofstudy,
+        from,
+        school,
+        to,
+      };
       try {
+        const profile = await Profile.findOne({ user: user.id });
+        // @ts-ignore
+        profile.education.unshift(newEdu);
+        return await profile.save();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
 
-    updateAndCreateEexperience: async (_: any, __: any, ___: any): Promise<void> => {
+    createExperience: async (
+      _: any,
+      { company, current, description, from, location, title, to }: any,
+      { user }: any
+    ): Promise<any> => {
+      const newExp = {
+        company,
+        current,
+        description,
+        from,
+        location,
+        title,
+        to,
+      };
       try {
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    updateAndCreateSocial: async (profile: any, __: any, ___: any): Promise<void> => {
-      try {
+        const profile = await Profile.findOne({ user: user.id });
+        // @ts-ignore
+        profile.experience.unshift(newExp);
+        return await profile.save();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -167,7 +172,7 @@ export const resolver = {
   },
 
   User: {
-    profiles: async (user: any, __: any, ctx: any): Promise<any> => {
+    profiles: async (user: any, __: any, ___: any): Promise<any> => {
       try {
         const profiles = await Profile.find({});
         return profiles.filter((profile: any) => profile.user.id === user.id);
@@ -181,8 +186,9 @@ export const resolver = {
   Profile: {
     education: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
-        const educations = await Education.find({});
-        return educations.filter((education: any) => education.id === profile.id);
+        const profiles = await Profile.find({});
+        // @ts-ignore
+        return profiles.education.filter((edu: any) => edu.id === profile.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -191,18 +197,8 @@ export const resolver = {
 
     experience: async (profile: any, __: any, ___: any): Promise<any> => {
       try {
-        const experiences = await Experience.find({});
-        return experiences.filter((experience: any) => experience.id === profile.id);
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    social: async (profile: any, __: any, ___: any): Promise<any> => {
-      try {
-        const socials = await Social.find({});
-        return socials.filter((social: any) => social.id === profile.id);
+        const profiles = await Profile.find({});
+        return profiles.filter((exp: any) => exp.id === profile.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
