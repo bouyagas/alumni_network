@@ -1,10 +1,11 @@
 import { AuthenticationError } from 'apollo-server';
 import { authenticated } from './../../utils/auth';
+import { Post } from './../post/post.model';
 
 export const resolvers = {
   Query: {
     post: authenticated(
-      async (_: any, { id }: any, { models: { Post }, user }: any): Promise<any> => {
+      async (_: any, { id }: any, { user }: any): Promise<any> => {
         try {
           const post: any = await Post.findById({ id, user: user.id }).sort({
             created_at: -1,
@@ -18,12 +19,11 @@ export const resolvers = {
     ),
 
     posts: authenticated(
-      async (_: any, __: any, { models: { Post }, user }: any): Promise<any> => {
+      async (_: any, __: any, { user }: any): Promise<any> => {
         try {
-          const posts: any[] = await Post.find({ user: user.id })
+          const posts: any = await Post.find({ user: user.id })
             .sort({ created_at: -1 })
-            .exec()
-            .lean();
+            .exec();
           return { posts };
         } catch (err) {
           console.error(err.message);
@@ -34,7 +34,7 @@ export const resolvers = {
   },
   Mutation: {
     newComment: authenticated(
-      async (_: any, { text, id }: any, { models: { Post }, user }: any): Promise<any> => {
+      async (_: any, { text, id }: any, { user }: any): Promise<any> => {
         try {
           const post: any = await Post.findById({ id, user: user.id });
 
@@ -56,7 +56,7 @@ export const resolvers = {
     ),
 
     newPost: authenticated(
-      async (_: any, { text }: any, { models: { Post }, user }: any): Promise<any> => {
+      async (_: any, { text }: any, { user }: any): Promise<any> => {
         try {
           const createPost: any = new Post({
             avatar: user.avatar,
@@ -75,7 +75,7 @@ export const resolvers = {
     ),
 
     removePost: authenticated(
-      async (_: any, { id }: any, { models: { Post }, user }: any): Promise<void> => {
+      async (_: any, { id }: any, { user }: any): Promise<void> => {
         try {
           const post: any = await Post.findByIdAndRemove({ id, user: user.id });
 
@@ -105,7 +105,7 @@ export const resolvers = {
       }
     },
 
-    comments: async (post: any, __: any, { models: { Post }, user }: any): Promise<any> => {
+    comments: async (post: any, __: any, { user }: any): Promise<any> => {
       try {
         const posts: any = await Post.findOne({ user: user.id });
         return posts.comments.filter((comment: any) => comment.user.id === post.user.id);
@@ -126,7 +126,7 @@ export const resolvers = {
   },
 
   User: {
-    post: async (user: any, __: any, { models: { Post } }: any): Promise<any> => {
+    post: async (user: any, __: any, ___: any): Promise<any> => {
       try {
         const posts: any = await Post.findOne({ user: user.id });
         return posts.filter((post: any) => post.user.id === user.id);

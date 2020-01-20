@@ -1,10 +1,10 @@
 import { AuthenticationError } from 'apollo-server';
 import { authenticated } from '../../utils/auth';
-
+import { Profile } from './profile.model';
 export const resolvers = {
   Query: {
     profile: authenticated(
-      async (_: any, { id }: any, { models: { Profile }, user }: any): Promise<any> => {
+      async (_: any, { id }: any, { user }: any): Promise<any> => {
         try {
           const profile: any = await Profile.findOne({ id, user: user.id }).populate('user', [
             'username',
@@ -21,10 +21,12 @@ export const resolvers = {
       }
     ),
 
-    profiles: async (_: any, __: any, { models: { Profile } }: any): Promise<any> => {
+    profiles: async (_: any, __: any, ___: any): Promise<any> => {
       try {
-        const profiles: any = await Profile.findOne({}).populate('user', ['username', 'avatar']).exec().lean();
-        return {profiles};
+        const profiles: any = await Profile.findOne({})
+          .populate('user', ['username', 'avatar'])
+          .exec();
+        return { profiles };
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -50,7 +52,7 @@ export const resolvers = {
           instagram,
           linkedin,
         }: any,
-        { models: { Profile }, user }: any
+        { user }: any
       ): Promise<any> => {
         const profileFields: any = {};
         profileFields.user = user.id;
@@ -100,7 +102,7 @@ export const resolvers = {
           profileFields.social.instagram = instagram;
         }
         try {
-          let profile: any = await Profile.findOne({                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     : user.id });
+          let profile: any = await Profile.findOne({ user: user.id });
           if (profile) {
             profile = await Profile.findOneAndUpdate(
               { user: user.id },
@@ -111,7 +113,7 @@ export const resolvers = {
             return profile;
           }
           profile = Profile.create(profileFields);
-          await profile
+          await profile;
         } catch (err) {
           console.error(err.message);
           throw new AuthenticationError(err.message);
@@ -149,7 +151,7 @@ export const resolvers = {
       async (
         _: any,
         { company, current, description, from, location, title, to }: any,
-        { models: { Profile }, user }: any
+        { user }: any
       ): Promise<any> => {
         const newExp = {
           company,
@@ -176,7 +178,7 @@ export const resolvers = {
   User: {
     profile: async (user: any, __: any, ___: any): Promise<any> => {
       try {
-         return user.find((profile: any) => profile.id === user.id);
+        return user.find((profile: any) => profile.id === user.id);
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -185,9 +187,9 @@ export const resolvers = {
   },
 
   Profile: {
-    education: async (profile: any, __: any, { models: { Profile }, user }: any): Promise<any> => {
+    education: async (profile: any, __: any, { user }: any): Promise<any> => {
       try {
-        const profiles: any = await Profile.findOne({user: user.id});
+        const profiles: any = await Profile.findOne({ user: user.id });
         return profiles.education.filter((edu: any) => edu.id === profile.id);
       } catch (err) {
         console.error(err.message);
@@ -195,9 +197,9 @@ export const resolvers = {
       }
     },
 
-    experience: async (profile: any, __: any, { models: { Profile }, user }: any): Promise<any> => {
+    experience: async (profile: any, __: any, { user }: any): Promise<any> => {
       try {
-        const profiles = await Profile.find({user: user.id});
+        const profiles: any = await Profile.find({ user: user.id });
         return profiles.experience.filter((exp: any) => exp.id === profile.id);
       } catch (err) {
         console.error(err.message);

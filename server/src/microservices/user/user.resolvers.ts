@@ -1,6 +1,7 @@
 import { AuthenticationError } from 'apollo-server';
 import * as gravatar from 'gravatar';
-import { authenticated } from '../../utils/auth';
+import { authenticated, createToken } from '../../utils/auth';
+import { User } from './user.model';
 
 export const resolvers = {
   Query: {
@@ -20,21 +21,18 @@ export const resolvers = {
   },
 
   Mutation: {
-    signin: async (
-      _: any,
-      { input }: any,
-      { models: { User }, createToken }: any
-    ): Promise<any> => {
+    signin: async (_: any, { input: { password, email } }: any, ___: any): Promise<any> => {
       try {
-        const getUser = await User.findOne(input);
+        const getUser: any = await User.findOne({ email });
 
         if (!getUser) {
           throw new AuthenticationError('No user with that email');
         }
-
-        const token = createToken(getUser);
-
-        return { token, getUser };
+        const match: boolean = await getUser.comparePassword(password);
+        if (match) {
+          const token = createToken(getUser);
+          return { token, getUser };
+        }
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -43,8 +41,8 @@ export const resolvers = {
 
     signup: async (
       _: any,
-      { username, email, password }: any,
-      { models: { User }, createToken }: any
+      { input: { username, email, password } }: any,
+      ___: any
     ): Promise<any> => {
       try {
         const existingUser = await User.findOne({ email });
@@ -59,24 +57,24 @@ export const resolvers = {
           s: '200',
         });
 
-        const newUser = await User.create({ username, email, password, avatar });
+        const newUser: any = await User.create({ username, email, password, avatar });
 
         const token = createToken(newUser);
         return { token, newUser };
       } catch (err) {
-        console.error(err.message);
+        console.error(`mongodb cool ${err.message}`);
         throw new AuthenticationError(err.message);
       }
     },
 
     updateMe: authenticated(
-      async (_: any, { input }: any, { models: { User }, user }: any): Promise<any> => {
+      async (_: any, { input }: any, { user }: any): Promise<any> => {
         try {
           if (!user) {
             throw new AuthenticationError('Invalid Credentials');
           }
 
-          return await User.findByIdAndUpdate(user._id, input, { new: true })
+          return await User.findByIdAndUpdate(user.id, input, { new: true })
             .select('-password')
             .lean()
             .exec();
@@ -89,8 +87,8 @@ export const resolvers = {
   },
 
   User: {
-    __resolveReference: async (user: any, { models: { User } }: any) => {
-      return await User.findById(user.id);
+    __resolveReference: async (object: any, ___: any) => {
+      return await User.findById(object.id);
     },
   },
 };

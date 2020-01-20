@@ -6,7 +6,7 @@ export const typeDefs = gql`
     posts: [Post]!
   }
 
-  extend tpe Mutation {
+  extend type Mutation {
     newComment(input: CommentInput!): Comment!
     newPost(input: NewPostInput!): Post!
     removePost(id: ID!): Post!
@@ -24,7 +24,7 @@ export const typeDefs = gql`
     id: ID! @external
     username: String! @external
     avatar: String @external
-    posts: [Post]
+    posts: [Post]!
   }
 
   type Comment {

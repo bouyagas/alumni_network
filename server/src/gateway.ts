@@ -1,17 +1,13 @@
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server';
-import { Post } from './microservices/post/post.model';
-import { Profile } from './microservices/profile/profile.model';
-import { User } from './microservices/user/user.model';
 import { serverConfig } from './serverConfig';
-import { connect } from './serverConfig/db';
-import { createToken, getUserFromToken } from './utils/auth';
+import { getUserFromToken } from './utils/auth';
 
 export const gateway = new ApolloGateway({
   serviceList: [
-    { name: 'users', url: 'http://localhost:7001/graphql' },
-    { name: 'posts', url: 'http://localhost:7002/graphql' },
-    { name: 'profiles', url: 'http://localhost:7003/graphql' },
+    { name: 'user', url: 'http://localhost:7001/graphql' },
+    { name: 'post', url: 'http://localhost:7002/graphql' },
+    { name: 'profile', url: 'http://localhost:7003/graphql' },
   ],
   buildService({ url }) {
     return new RemoteGraphQLDataSource({
@@ -21,6 +17,7 @@ export const gateway = new ApolloGateway({
         // as a header called `user-id`
         // @ts-ignore
         request.http.headers.set('x-user-id', context.user);
+        // @ts-ignore
       },
     });
   },
@@ -37,15 +34,8 @@ export const gateway = new ApolloGateway({
 
         // try to retrieve a user with the token
         const user = await getUserFromToken(token);
-
         // add the user to the context
         return {
-          createToken,
-          models: {
-            Post,
-            Profile,
-            User,
-          },
           user,
         };
       }
@@ -57,7 +47,6 @@ export const gateway = new ApolloGateway({
     tracing: true,
   });
 
-  await connect(serverConfig.mongoDbUrl);
   const { url } = await server.listen({ port: serverConfig.port });
   console.log(`GQL 🚀 Server ready at ${url}`);
 })();

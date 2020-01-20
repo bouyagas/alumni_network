@@ -14,7 +14,7 @@
     "start-service-profile": "nodemon dist/microservices/profile",
     "start-service-user": "nodemon dist/microservices/user",
     "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-service-*'",
-    "start-gateway": "nodemon --delay 2.5 dist/gateway.js",
+    "start-gateway": "node dist/gateway.js",
     "postinstall": "lerna bootstrap"
   },
   "dependencies": {
@@ -27,7 +27,7 @@
     "jsonwebtoken": "^8.5.1",
     "lerna": "^3.20.2",
     "lodash": "^4.17.15",
-    "mongoose": "^5.8.7",
+    "mongoose": "^5.8.9",
     "rimraf": "^3.0.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.0-dev.20200114"
