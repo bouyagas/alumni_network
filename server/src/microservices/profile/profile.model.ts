@@ -136,5 +136,4 @@ const ProfileSchema: mongoose.Schema<any> = new mongoose.Schema(
   { timestamps: true }
 );
 
-ProfileSchema.set('toObject', { getters: true, virtuals: true });
 export const Profile: mongoose.Model<mongoose.Document> = mongoose.model('profile', ProfileSchema);

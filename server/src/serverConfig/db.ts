@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 import { serverConfig } from './index';
 
 export const connect = async (url: string = serverConfig.mongoDbUrl, opts = {}): Promise<void> => {

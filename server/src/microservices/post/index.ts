@@ -1,13 +1,13 @@
 import { buildFederatedSchema } from '@apollo/federation';
-import { ApolloServer, gql } from 'apollo-server';
-import { resolver } from './post.resolvers';
+import { ApolloServer } from 'apollo-server';
+import { resolvers } from './post.resolvers';
 import { typeDefs } from './post.typeDefs';
 
 const server = new ApolloServer({
   schema: buildFederatedSchema([
     {
       // @ts-ignore
-      resolver,
+      resolvers,
       typeDefs,
     },
   ]),

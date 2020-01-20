@@ -1,22 +1,39 @@
 import { AuthenticationError } from 'apollo-server';
-import config from 'config';
-import jwt from 'jsonwebtoken';
 
-export const authenticate = async (req: any, next?: any): Promise<void> => {
-  // Get token from header
-  const token: string = req.header('x-auth-token');
-  // Check if not token
-  if (!token) {
-    throw new AuthenticationError('No token, authorization denied');
-  }
-  // Verify token
+import * as config from 'config';
+import * as jwt from 'jsonwebtoken';
+import { User } from '../microservices/user/user.model';
+
+// @ts-ignore
+export const createToken = ({ id }) =>
+  jwt.sign({ id }, config.get('jwtSecret.jwt'), { expiresIn: 360000 });
+
+export const getUserFromToken = (token: any) => {
   try {
-    const decoded: string | object = jwt.verify(token, config.get('jwtSecret.jwt'));
-    // @ts-ignores
-    req.user = decoded.user;
-    next();
-  } catch (err) {
-    console.error(err.message);
-    throw new AuthenticationError(err.message);
+    const user: any = jwt.verify(token, config.get('jwtSecret.jwt'));
+    return User.findOne({ id: user.id });
+  } catch (e) {
+    return null;
   }
+};
+
+export const authenticated = (next: any) => (root: any, args: any, context: any, info: any) => {
+  if (!context.user) {
+    throw new AuthenticationError('must authenticate');
+  }
+
+  return next(root, args, context, info);
+};
+
+export const authorized = (id: any, next: any) => (
+  root: any,
+  args: any,
+  context: any,
+  info: any
+) => {
+  if (context.user.id !== id) {
+    throw new AuthenticationError(`you must have ${id} role`);
+  }
+
+  return next(root, args, context, info);
 };

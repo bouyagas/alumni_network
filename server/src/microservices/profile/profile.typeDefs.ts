@@ -4,8 +4,6 @@ export const typeDefs = gql`
   type Query {
     profile: Profile!
     profiles: [Profile]!
-    education: [Education]!
-    experience: [Experience]!
   }
 
   type Mutation {
@@ -17,8 +15,7 @@ export const typeDefs = gql`
   extend type User @key(fields: "id") {
     id: ID! @external
     username: String! @external
-    avatar: String @external
-    profiles: [Profile]!
+    profile: Profile
   }
 
   scalar Date
@@ -72,15 +69,15 @@ export const typeDefs = gql`
     githubusername: String
     experience: [Experience]!
     education: [Education]!
-    social: [Social]!
+    social: Social!
   }
 
   input CreateEducationInput {
     school: String!
     degree: String!
     fieldofstudy: String!
-    from: String!
-    to: String
+    from: Date!
+    to: Date
     current: Boolean
     description: String!
   }
@@ -89,8 +86,8 @@ export const typeDefs = gql`
     title: String!
     company: String!
     location: String
-    from: String!
-    to: String
+    from: Date!
+    to: Date
     current: Boolean
     description: String
   }

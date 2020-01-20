@@ -1,9 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const userSchema: mongoose.Schema<any> = new Schema(
+const userSchema: mongoose.Schema<any> = new mongoose.Schema(
   {
     username: {
       required: true,
@@ -29,8 +27,6 @@ const userSchema: mongoose.Schema<any> = new Schema(
 
   { timestamps: true }
 );
-
-userSchema.set('toObject', { getters: true, virtuals: true });
 
 userSchema.pre('save', async function(this: any, next: () => {}) {
   if (!this.isModified('password')) {

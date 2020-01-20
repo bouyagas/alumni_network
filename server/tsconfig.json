@@ -24,6 +24,6 @@
     "baseUrl": ".",
     "rootDir": "src"
   },
-  "exclude": ["node_modules"],
-  "include": ["./src/**/**/*.ts"]
+  "exclude": ["node_modules", "/src/microservices/*"],
+  "include": ["./src/**/*.ts"]
 }

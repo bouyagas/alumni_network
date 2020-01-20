@@ -1,12 +1,11 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+import * as mongoose from 'mongoose';
 
-const PostSchema: mongoose.Schema<any> = new Schema(
+const PostSchema: mongoose.Schema<any> = new mongoose.Schema(
   {
     user: {
       ref: 'user',
       required: true,
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
     },
 
     name: {
@@ -23,20 +22,11 @@ const PostSchema: mongoose.Schema<any> = new Schema(
       type: String,
     },
 
-    likes: [
-      {
-        user: {
-          ref: 'user',
-          type: Schema.Types.ObjectId,
-        },
-      },
-    ],
-
     comments: [
       {
         user: {
           ref: 'user',
-          type: Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
         },
 
         name: {

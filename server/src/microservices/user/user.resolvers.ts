@@ -1,61 +1,55 @@
 import { AuthenticationError } from 'apollo-server';
-import config from 'config';
-import gravatar from 'gravatar';
-import jwt from 'jsonwebtoken';
-import { User } from './user.model';
+import * as gravatar from 'gravatar';
+import { authenticated } from '../../utils/auth';
 
-export const resolver = {
+export const resolvers = {
   Query: {
-    me: async (_: any, args: string, ctx: any): Promise<void> => {
-      try {
-        if (!ctx.user) {
-          throw new AuthenticationError('Invalid Credentials');
+    me: authenticated(
+      async (_: any, __: any, { user }: any): Promise<any> => {
+        try {
+          if (!user) {
+            throw new AuthenticationError('Invalid Credentials');
+          }
+          return await user;
+        } catch (err) {
+          console.error(err.message);
+          throw new AuthenticationError(err.message);
         }
-        return await ctx.user;
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
       }
-    },
+    ),
   },
 
   Mutation: {
-    signin: async (_: any, args: any, ctx: any): Promise<void> => {
+    signin: async (
+      _: any,
+      { input }: any,
+      { models: { User }, createToken }: any
+    ): Promise<any> => {
       try {
-        const { email } = args;
-        ctx.user = await User.findOne({ where: { email } });
+        const getUser = await User.findOne(input);
 
-        if (!ctx.user) {
+        if (!getUser) {
           throw new AuthenticationError('No user with that email');
         }
 
-        const payload = {
-          user: {
-            id: ctx.user.id,
-          },
-        };
-        jwt.sign(
-          payload,
-          config.get('jwtSecret.jwt'),
-          { expiresIn: 360000 },
-          (err: any, token: string): string => {
-            if (err) {
-              throw err;
-            }
-            return token;
-          }
-        );
+        const token = createToken(getUser);
+
+        return { token, getUser };
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
 
-    signup: async (_: any, { username, email, password }: any, ctx: any): Promise<void> => {
+    signup: async (
+      _: any,
+      { username, email, password }: any,
+      { models: { User }, createToken }: any
+    ): Promise<any> => {
       try {
-        let user = await User.findOne({ where: { email } });
+        const existingUser = await User.findOne({ email });
 
-        if (user) {
+        if (existingUser) {
           throw new AuthenticationError('User already exists');
         }
 
@@ -65,51 +59,38 @@ export const resolver = {
           s: '200',
         });
 
-        user = await User.create({ username, email, password, avatar });
+        const newUser = await User.create({ username, email, password, avatar });
 
-        const payload = {
-          user: {
-            id: user.id,
-          },
-        };
+        const token = createToken(newUser);
+        return { token, newUser };
+      } catch (err) {
+        console.error(err.message);
+        throw new AuthenticationError(err.message);
+      }
+    },
 
-        jwt.sign(
-          payload,
-          config.get('jwtSecret.jwt'),
-          { expiresIn: 360000 },
-          (err: any, token: string): string => {
-            if (err) {
-              throw err;
-            }
-            return token;
+    updateMe: authenticated(
+      async (_: any, { input }: any, { models: { User }, user }: any): Promise<any> => {
+        try {
+          if (!user) {
+            throw new AuthenticationError('Invalid Credentials');
           }
-        );
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
 
-    updateMe: async (_: any, args: any, ctx: any): Promise<void> => {
-      try {
-        if (!ctx.user) {
-          throw new AuthenticationError('Invalid Credentials');
+          return await User.findByIdAndUpdate(user._id, input, { new: true })
+            .select('-password')
+            .lean()
+            .exec();
+        } catch (err) {
+          console.error(err.message);
+          throw new AuthenticationError(err.message);
         }
-
-        return await User.findByIdAndUpdate(ctx.user._id, args.input, { new: true })
-          .select('-password')
-          .lean()
-          .exec();
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
       }
-    },
+    ),
   },
 
   User: {
-    __resolveReference(user: any) {
-      return User.findById(user.id);
+    __resolveReference: async (user: any, { models: { User } }: any) => {
+      return await User.findById(user.id);
     },
   },
 };
