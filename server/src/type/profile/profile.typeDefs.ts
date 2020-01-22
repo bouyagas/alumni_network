@@ -1,23 +1,6 @@
 import { gql } from 'apollo-server';
 
-export const typeDefs = gql`
-  type Query {
-    profile: Profile!
-    profiles: [Profile]!
-  }
-
-  type Mutation {
-    updateAndCreateProfile(input: UpdateAndCreateProfileInput!): Profile!
-    createEducation(input: CreateEducationInput!): Education!
-    createExperience(input: CreateExperienceInput): Experience!
-  }
-
-  extend type User @key(fields: "id") {
-    id: ID! @external
-    username: String! @external
-    profile: Profile
-  }
-
+export const profileTypeDefs = gql`
   scalar Date
 
   enum Status {
@@ -57,9 +40,9 @@ export const typeDefs = gql`
     youtube: String
   }
 
-  type Profile @key(fields: "id") {
+  type Profile {
     id: ID!
-    user: User! @provides(fields: "username")
+    user: User
     company: String
     website: String
     location: String
@@ -109,5 +92,16 @@ export const typeDefs = gql`
     bio: String!
     githubusername: String!
     social: UpdateAndCreateSocialInput
+  }
+
+  extend type Query {
+    profile: Profile!
+    profiles: [Profile]!
+  }
+
+  extend type Mutation {
+    updateAndCreateProfile(input: UpdateAndCreateProfileInput!): Profile!
+    createEducation(input: CreateEducationInput!): Education!
+    createExperience(input: CreateExperienceInput): Experience!
   }
 `;

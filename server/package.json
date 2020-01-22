@@ -10,8 +10,8 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "start-gateway": "nodemon dist/server.js",
-    "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-gateway'"
+    "start-server": "nodemon dist/server.js",
+    "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-server'"
   },
   "dependencies": {
     "apollo-server": "^2.9.16",

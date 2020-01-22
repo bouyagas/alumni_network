@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 
-export default gql`
+export const rootTypeDefs = gql`
   type Query
   type Mutation
   schema {

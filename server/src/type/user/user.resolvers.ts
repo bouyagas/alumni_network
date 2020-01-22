@@ -4,12 +4,14 @@ import { authenticated, createToken } from '../../utils/auth';
 import { validateSignInInput, validateSignUpInput } from '../../utils/validators';
 import { User } from './user.model';
 
-export const resolvers = {
+export const userResolvers = {
   Query: {
     me: authenticated(async (_: any, { id }: any, ___: any) => {
       return await User.findOne({ id });
     }),
   },
+
+  // tslint:disable-next-line: object-literal-sort-keys
   Mutation: {
     signin: async (
       _: any,
@@ -93,11 +95,5 @@ export const resolvers = {
         }
       }
     ),
-  },
-
-  User: {
-    __resolveReference: async (_: any, { user }: any) => {
-      return await User.findOne({ id: user.id });
-    },
   },
 };

@@ -2,7 +2,7 @@ import { AuthenticationError } from 'apollo-server';
 import { authenticated } from '../../utils/auth';
 import { Post } from './post.model';
 
-export const resolvers = {
+export const postResolvers = {
   Query: {
     post: authenticated(
       async (_: any, { id }: any, { user }: any): Promise<any> => {
@@ -21,7 +21,7 @@ export const resolvers = {
     posts: authenticated(
       async (_: any, __: any, { user }: any): Promise<any> => {
         try {
-          const posts: any = await Post.find({ user: user.id })
+          const posts: any = await Post.find({ id: user.id })
             .sort({ created_at: -1 })
             .exec();
           return { posts };
@@ -32,11 +32,12 @@ export const resolvers = {
       }
     ),
   },
+  // tslint:disable-next-line: object-literal-sort-keys
   Mutation: {
     newComment: authenticated(
-      async (_: any, { text, id }: any, { user }: any): Promise<any> => {
+      async (_: any, { text }: any, { user }: any): Promise<any> => {
         try {
-          const post: any = await Post.findById({ id, user: user.id });
+          const post: any = await Post.findById({ id: user.id });
 
           const newComment = {
             avatar: user.avatar,
@@ -56,13 +57,13 @@ export const resolvers = {
     ),
 
     newPost: authenticated(
-      async (_: any, { text }: any, { currentUser }: any): Promise<any> => {
+      async (_: any, { text }: any, { user }: any): Promise<any> => {
         try {
           const createPost: any = new Post({
-            avatar: currentUser.avatar,
-            name: currentUser.username,
+            avatar: user.avatar,
+            name: user.username,
             text,
-            user: currentUser.id,
+            user: user.id,
           });
 
           const newPost = await createPost.save();
@@ -75,15 +76,15 @@ export const resolvers = {
     ),
 
     removePost: authenticated(
-      async (_: any, { id }: any, { currentUser }: any): Promise<void> => {
+      async (_: any, { id }: any, { user }: any): Promise<void> => {
         try {
-          const post: any = await Post.findByIdAndRemove({ id, user: currentUser.id });
+          const post: any = await Post.findByIdAndRemove({ id, user: user.id });
 
           if (!post) {
             throw new AuthenticationError('Post not found');
           }
 
-          if (post.user.toString() !== currentUser.id) {
+          if (post.user.toString() !== user.id) {
             throw new AuthenticationError('User not authorized');
           }
           return await post;
@@ -93,49 +94,5 @@ export const resolvers = {
         }
       }
     ),
-  },
-
-  Post: {
-    comments: async (post: any, __: any, { currentUser }: any): Promise<any> => {
-      try {
-        const posts: any = await Post.findOne({ user: currentUser.id });
-        return posts.comments.filter((comment: any) => comment.user.id === post.user.id);
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    user: async (post: any, __: any, ___: any): Promise<any> => {
-      try {
-        return { __typename: 'User', id: post.user.id };
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-  },
-
-  User: {
-    post: async (user: any, __: any, ___: any): Promise<any> => {
-      try {
-        const posts: any = await Post.findOne({ user: user.id });
-        return posts.filter((post: any) => post.user.id === user.id);
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-  },
-
-  Comment: {
-    user: async (comment: any, __: any, ___: any): Promise<any> => {
-      try {
-        return { __typename: 'User', id: comment.user.id };
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
   },
 };

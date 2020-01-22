@@ -1,32 +1,15 @@
 import { gql } from 'apollo-server';
 
-export const typeDefs = gql`
-  extend type Query {
-    post(id: ID!): Post!
-    posts: [Post]!
-  }
-
-  extend type Mutation {
-    newComment(input: CommentInput!): Comment!
-    newPost(input: NewPostInput!): Post!
-    removePost(id: ID!): Post!
-  }
-
-  type Post @key(fields: "id") {
+export const postTypeDefs = gql`
+  type Post {
     id: ID!
-    name: User! @provides(fields: "username")
+    name: User!
     text: String!
     comments: [Comment]!
   }
 
-  extend type User @key(fields: "id") {
-    id: ID! @external
-    username: String! @external
-    posts: [Post]!
-  }
-
   type Comment {
-    user: User! @provides(fields: "username")
+    user: User!
     text: String!
   }
 
@@ -40,5 +23,16 @@ export const typeDefs = gql`
     text: String!
     name: String
     avatar: String
+  }
+
+  extend type Query {
+    post: Post!
+    posts: [Post]!
+  }
+
+  extend type Mutation {
+    newComment(input: CommentInput!): Comment!
+    newPost(input: NewPostInput!): Post!
+    removePost(id: ID!): Post!
   }
 `;
