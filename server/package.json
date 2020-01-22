@@ -10,12 +10,8 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "start-service-post": "nodemon dist/microservices/post/",
-    "start-service-profile": "nodemon dist/microservices/profile",
-    "start-service-user": "nodemon dist/microservices/user",
-    "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-service-*'",
-    "start-gateway": "node dist/gateway.js",
-    "postinstall": "lerna bootstrap"
+    "start-gateway": "nodemon dist/server.js",
+    "watch": "rimraf dist && yarn run build-ts && concurrently 'yarn:watch-ts' 'yarn:start-gateway'"
   },
   "dependencies": {
     "apollo-server": "^2.9.16",
@@ -23,9 +19,9 @@
     "config": "^3.2.4",
     "faker": "^4.1.0",
     "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.6",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
-    "lerna": "^3.20.2",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.9",
     "rimraf": "^3.0.0",
@@ -34,7 +30,6 @@
   },
   "devDependencies": {
     "@apollo/federation": "^0.11.3",
-    "@apollo/gateway": "^0.11.7",
     "@types/bcrypt": "^3.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/config": "^0.0.36",
