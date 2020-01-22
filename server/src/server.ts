@@ -1,6 +1,7 @@
 import { ApolloServer, makeExecutableSchema } from 'apollo-server';
 import { merge } from 'lodash';
 import { serverConfig } from './serverConfig';
+import { connect } from './serverConfig/db';
 import { postResolvers } from './type/post/post.resolvers';
 import { postTypeDefs } from './type/post/post.typeDefs';
 import { profileResolvers } from './type/profile/profile.resolvers';
@@ -29,7 +30,7 @@ const schema = makeExecutableSchema({
     subscriptions: false,
     tracing: true,
   });
-
+  await connect(serverConfig.mongoDbUrl);
   const { url } = await server.listen({ port: serverConfig.port });
   console.log(`GQL 🚀 Gateway server ready at ${url}`);
 })();
