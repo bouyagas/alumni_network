@@ -1,11 +1,9 @@
-import { AuthenticationError } from 'apollo-server';
-
+// import { AuthenticationError } from 'apollo-server';
 import * as config from 'config';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../microservices/user/user.model';
 
-// @ts-ignore
-export const createToken = ({ id }) =>
+export const createToken = ({ id }: any) =>
   jwt.sign({ id }, config.get('jwtSecret.jwt'), { expiresIn: 360000 });
 
 export const getUserFromToken = (token: any) => {
@@ -18,22 +16,9 @@ export const getUserFromToken = (token: any) => {
 };
 
 export const authenticated = (next: any) => (root: any, args: any, context: any, info: any) => {
-  if (!context.user) {
-    throw new AuthenticationError('must authenticate');
-  }
-
-  return next(root, args, context, info);
-};
-
-export const authorized = (id: any, next: any) => (
-  root: any,
-  args: any,
-  context: any,
-  info: any
-) => {
-  if (context.user.id !== id) {
-    throw new AuthenticationError(`you must have ${id} role`);
-  }
+  // if (!context.user) {
+  //   throw new AuthenticationError('must authenticate');
+  // }
 
   return next(root, args, context, info);
 };

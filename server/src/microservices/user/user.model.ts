@@ -28,10 +28,6 @@ const userSchema: mongoose.Schema<any> = new mongoose.Schema(
   { timestamps: true }
 );
 
-/**
- * Never save the password directly onto the model,
- * always encrypt first.
- */
 userSchema.pre('save', function preSave(this: any, next: () => {}) {
   if (!this.isModified('password')) {
     next();

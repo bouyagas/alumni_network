@@ -56,13 +56,13 @@ export const resolvers = {
     ),
 
     newPost: authenticated(
-      async (_: any, { text }: any, { user }: any): Promise<any> => {
+      async (_: any, { text }: any, { currentUser }: any): Promise<any> => {
         try {
           const createPost: any = new Post({
-            avatar: user.avatar,
-            name: user.username,
+            avatar: currentUser.avatar,
+            name: currentUser.username,
             text,
-            user: user.id,
+            user: currentUser.id,
           });
 
           const newPost = await createPost.save();
@@ -75,15 +75,15 @@ export const resolvers = {
     ),
 
     removePost: authenticated(
-      async (_: any, { id }: any, { user }: any): Promise<void> => {
+      async (_: any, { id }: any, { currentUser }: any): Promise<void> => {
         try {
-          const post: any = await Post.findByIdAndRemove({ id, user: user.id });
+          const post: any = await Post.findByIdAndRemove({ id, user: currentUser.id });
 
           if (!post) {
             throw new AuthenticationError('Post not found');
           }
 
-          if (post.user.toString() !== user.id) {
+          if (post.user.toString() !== currentUser.id) {
             throw new AuthenticationError('User not authorized');
           }
           return await post;
@@ -96,18 +96,9 @@ export const resolvers = {
   },
 
   Post: {
-    avatar: async (post: any, __: any, ___: any): Promise<any> => {
+    comments: async (post: any, __: any, { currentUser }: any): Promise<any> => {
       try {
-        return { __typename: 'User', id: post.user.id };
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    comments: async (post: any, __: any, { user }: any): Promise<any> => {
-      try {
-        const posts: any = await Post.findOne({ user: user.id });
+        const posts: any = await Post.findOne({ user: currentUser.id });
         return posts.comments.filter((comment: any) => comment.user.id === post.user.id);
       } catch (err) {
         console.error(err.message);
@@ -115,7 +106,7 @@ export const resolvers = {
       }
     },
 
-    name: async (post: any, __: any, ___: any): Promise<any> => {
+    user: async (post: any, __: any, ___: any): Promise<any> => {
       try {
         return { __typename: 'User', id: post.user.id };
       } catch (err) {
@@ -138,16 +129,7 @@ export const resolvers = {
   },
 
   Comment: {
-    avatar: async (comment: any, __: any, ___: any): Promise<any> => {
-      try {
-        return { __typename: 'User', id: comment.user.id };
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
-
-    name: async (comment: any, __: any, ___: any): Promise<any> => {
+    user: async (comment: any, __: any, ___: any): Promise<any> => {
       try {
         return { __typename: 'User', id: comment.user.id };
       } catch (err) {

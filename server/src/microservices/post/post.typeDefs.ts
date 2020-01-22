@@ -16,21 +16,18 @@ export const typeDefs = gql`
     id: ID!
     name: User! @provides(fields: "username")
     text: String!
-    avatar: User! @provides(fields: "avatar")
     comments: [Comment]!
   }
 
   extend type User @key(fields: "id") {
     id: ID! @external
     username: String! @external
-    avatar: String @external
     posts: [Post]!
   }
 
   type Comment {
-    name: User! @provides(fields: "username")
+    user: User! @provides(fields: "username")
     text: String!
-    avatar: User! @provides(fields: "avatar")
   }
 
   input CommentInput {

@@ -2,7 +2,11 @@ import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server';
 import { serverConfig } from './serverConfig';
 import { getUserFromToken } from './utils/auth';
-
+class AuthenticatedDataSource extends RemoteGraphQLDataSource {
+  public willSendRequest({ request, context }: any): void {
+    request.http.headers.set('Authorization', context.user);
+  }
+}
 export const gateway = new ApolloGateway({
   serviceList: [
     { name: 'user', url: 'http://localhost:7001/graphql' },
@@ -10,36 +14,19 @@ export const gateway = new ApolloGateway({
     { name: 'profile', url: 'http://localhost:7003/graphql' },
   ],
   buildService({ url }) {
-    return new RemoteGraphQLDataSource({
-      url,
-      willSendRequest({ request, context }) {
-        // pass the user's id from the context to underlying services
-        // as a header called `user-id`
-        // @ts-ignore
-        request.http.headers.set('x-user-id', context.user);
-        // @ts-ignore
-      },
-    });
+    return new AuthenticatedDataSource({ url });
   },
 });
 
 (async () => {
   const { schema, executor } = await gateway.load();
-
   const server = new ApolloServer({
-    context: async ({ req }) => {
-      if (req) {
-        // get the user token from the headers
-        const token = req.headers.authorization || '';
-
-        // try to retrieve a user with the token
-        const user = await getUserFromToken(token);
-        // add the user to the context
-        return {
-          user,
-        };
-      }
-      return undefined;
+    context: ({ req }) => {
+      const token = req.headers.authorization;
+      console.log('token cool ' + token);
+      const user: any = getUserFromToken(token);
+      console.log(user);
+      return { user };
     },
     executor,
     schema,
@@ -48,5 +35,5 @@ export const gateway = new ApolloGateway({
   });
 
   const { url } = await server.listen({ port: serverConfig.port });
-  console.log(`GQL 🚀 Server ready at ${url}`);
+  console.log(`GQL 🚀 Gateway server ready at ${url}`);
 })();

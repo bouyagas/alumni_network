@@ -1,38 +1,44 @@
-import { AuthenticationError } from 'apollo-server';
+import { AuthenticationError, UserInputError } from 'apollo-server';
 import * as gravatar from 'gravatar';
 import { authenticated, createToken } from '../../utils/auth';
+import { validateSignInInput, validateSignUpInput } from '../../utils/validators';
 import { User } from './user.model';
 
 export const resolvers = {
   Query: {
-    me: authenticated(
-      async (_: any, __: any, { user }: any): Promise<any> => {
-        try {
-          if (!user) {
-            throw new AuthenticationError('Invalid Credentials');
-          }
-          return await user;
-        } catch (err) {
-          console.error(err.message);
-          throw new AuthenticationError(err.message);
-        }
-      }
-    ),
+    me: authenticated(async (_: any, { id }: any, ___: any) => {
+      return await User.findOne({ id });
+    }),
   },
-
   Mutation: {
-    signin: async (_: any, { input: { password, email } }: any, ___: any): Promise<any> => {
+    signin: async (
+      _: any,
+      { input: { username, password, email } }: any,
+      ___: any
+    ): Promise<any> => {
       try {
-        const getUser: any = await User.findOne({ email });
+        const { errors, valid } = validateSignInInput(username, email, password);
 
-        if (!getUser) {
-          throw new AuthenticationError('No user with that email');
+        if (!valid) {
+          throw new UserInputError('Errors', { errors });
         }
-        const match: boolean = await getUser.comparePassword(password);
-        if (match) {
-          const token = createToken(getUser);
-          return { token, getUser };
+
+        const user: any = await User.findOne({ email });
+
+        if (!user) {
+          errors.general = 'User not found';
+          throw new UserInputError('User not found', { errors });
         }
+
+        const match: boolean = await user.comparePassword(password);
+
+        if (!match) {
+          errors.general = 'Wrong crendetials';
+          throw new UserInputError('Wrong crendetials', { errors });
+        }
+        const token = createToken(user);
+
+        return { token, user };
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -41,14 +47,22 @@ export const resolvers = {
 
     signup: async (
       _: any,
-      { input: { username, email, password } }: any,
+      { input: { username, email, password, confirmPassword } }: any,
       ___: any
     ): Promise<any> => {
       try {
+        const { valid, errors } = validateSignUpInput(username, email, password, confirmPassword);
+        if (!valid) {
+          throw new UserInputError('Errors', { errors });
+        }
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-          throw new AuthenticationError('User already exists');
+          throw new UserInputError('Email is taken', {
+            errors: {
+              email: 'User already exists',
+            },
+          });
         }
 
         const avatar = gravatar.url(email, {
@@ -57,10 +71,9 @@ export const resolvers = {
           s: '200',
         });
 
-        const newUser: any = await User.create({ username, email, password, avatar });
-
-        const token = createToken(newUser);
-        return { token, newUser };
+        const user: any = await User.create({ username, email, password, avatar });
+        const token = createToken(user);
+        return { token, user };
       } catch (err) {
         console.error(`mongodb cool ${err.message}`);
         throw new AuthenticationError(err.message);
@@ -70,10 +83,6 @@ export const resolvers = {
     updateMe: authenticated(
       async (_: any, { input }: any, { user }: any): Promise<any> => {
         try {
-          if (!user) {
-            throw new AuthenticationError('Invalid Credentials');
-          }
-
           return await User.findByIdAndUpdate(user.id, input, { new: true })
             .select('-password')
             .lean()
@@ -87,8 +96,8 @@ export const resolvers = {
   },
 
   User: {
-    __resolveReference: async (object: any, ___: any) => {
-      return await User.findById(object.id);
+    __resolveReference: async (_: any, { user }: any) => {
+      return await User.findOne({ id: user.id });
     },
   },
 };
