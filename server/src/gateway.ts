@@ -13,7 +13,7 @@ export const gateway = new ApolloGateway({
     { name: 'post', url: 'http://localhost:7002/graphql' },
     { name: 'profile', url: 'http://localhost:7003/graphql' },
   ],
-  buildService({ url }) {
+  buildService({ url }: any) {
     return new AuthenticatedDataSource({ url });
   },
 });
