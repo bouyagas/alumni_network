@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 
-export const profileTypeDefs = gql`
+export const profilesTypeDefs = gql`
   scalar Date
 
   enum Status {

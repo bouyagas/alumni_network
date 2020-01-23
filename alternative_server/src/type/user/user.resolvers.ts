@@ -1,14 +1,16 @@
 import { AuthenticationError, UserInputError } from 'apollo-server';
 import * as gravatar from 'gravatar';
-import { authenticated, createToken } from '../../utils/auth';
+import { checkAuth, createToken } from '../../utils/auth';
 import { validateSignInInput, validateSignUpInput } from '../../utils/validators';
 import { User } from './user.model';
 
-export const userResolvers = {
+export const usersResolvers = {
   Query: {
-    me: authenticated(async (_: any, { id }: any, ___: any) => {
-      return await User.findOne({ id });
-    }),
+    me: async (_: any, ___: any, context: any) => {
+      const user: any = checkAuth(context);
+      console.log(user);
+      return await user;
+    },
   },
 
   // tslint:disable-next-line: object-literal-sort-keys
@@ -77,23 +79,21 @@ export const userResolvers = {
         const token = createToken(user);
         return { token, user };
       } catch (err) {
-        console.error(`mongodb cool ${err.message}`);
         throw new AuthenticationError(err.message);
       }
     },
 
-    updateMe: authenticated(
-      async (_: any, { input }: any, { user }: any): Promise<any> => {
-        try {
-          return await User.findByIdAndUpdate(user.id, input, { new: true })
-            .select('-password')
-            .lean()
-            .exec();
-        } catch (err) {
-          console.error(err.message);
-          throw new AuthenticationError(err.message);
-        }
+    updateMe: async (_: any, { input }: any, context: any): Promise<any> => {
+      try {
+        const user: any = checkAuth(context);
+        return await User.findOneAndUpdate(user._id, input, { new: true })
+          .select('-password')
+          .lean()
+          .exec();
+      } catch (err) {
+        console.error(err.message);
+        throw new AuthenticationError(err.message);
       }
-    ),
+    },
   },
 };

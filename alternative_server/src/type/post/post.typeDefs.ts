@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 
-export const postTypeDefs = gql`
+export const postsTypeDefs = gql`
   type Post {
     id: ID!
     name: User!
