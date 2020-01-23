@@ -20,8 +20,6 @@ const ProfileSchema: mongoose.Schema<any> = new mongoose.Schema(
     },
 
     status: {
-      default: 'Junior_Developer',
-      enum: ['Junior_Developer', 'Senior_Developer', 'Student', 'Instructor', 'Manager', 'Other'],
       required: true,
       type: String,
     },

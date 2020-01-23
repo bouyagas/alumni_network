@@ -86,7 +86,7 @@ export const usersResolvers = {
     updateMe: async (_: any, { input }: any, context: any): Promise<any> => {
       try {
         const user: any = checkAuth(context);
-        return await User.findOneAndUpdate(user._id, input, { new: true })
+        return await User.findOneAndUpdate(user.id, input, { new: true })
           .select('-password')
           .lean()
           .exec();

@@ -3,15 +3,6 @@ import { gql } from 'apollo-server';
 export const profilesTypeDefs = gql`
   scalar Date
 
-  enum Status {
-    Junior_Developer
-    Senior_Developer
-    Student
-    Instructor
-    Manager
-    Other
-  }
-
   type Education {
     school: String!
     degree: String!
@@ -46,7 +37,7 @@ export const profilesTypeDefs = gql`
     company: String
     website: String
     location: String
-    status: Status!
+    status: String!
     skills: [String!]!
     bio: String
     githubusername: String
@@ -88,7 +79,7 @@ export const profilesTypeDefs = gql`
     website: String!
     location: String!
     status: String!
-    skills: [String]!
+    skills: String!
     bio: String!
     githubusername: String!
     social: UpdateAndCreateSocialInput

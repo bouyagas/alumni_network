@@ -1,10 +1,12 @@
 import { AuthenticationError } from 'apollo-server';
+import { checkAuth } from '../../utils/auth';
 import { Profile } from './profile.model';
 
 export const profilesResolvers = {
   Query: {
-    profile: async (_: any, __: any, { user }: any): Promise<any> => {
+    profile: async (_: any, __: any, context: any): Promise<any> => {
       try {
+        const user: any = checkAuth(context);
         const profile: any = await Profile.findOne({
           user: user.id,
         }).populate('user', ['username', 'avatar']);
@@ -50,8 +52,9 @@ export const profilesResolvers = {
           linkedin,
         },
       }: any,
-      { user }: any
+      context: any
     ): Promise<any> => {
+      const user: any = checkAuth(context);
       const profileFields: any = {};
       profileFields.user = user.id;
 
@@ -100,7 +103,7 @@ export const profilesResolvers = {
         profileFields.social.instagram = instagram;
       }
       try {
-        let profile: any = await Profile.findOne({ id: user.id });
+        let profile: any = await Profile.findOne({ user: user.id });
         if (profile) {
           profile = await Profile.findOneAndUpdate(
             { user: user.id },
@@ -121,8 +124,9 @@ export const profilesResolvers = {
     createEducation: async (
       _: any,
       { input: { current, degree, description, fieldofstudy, from, school, to } }: any,
-      { user }: any
+      context: any
     ): Promise<any> => {
+      const user: any = checkAuth(context);
       const newEdu = {
         current,
         degree,
@@ -133,7 +137,7 @@ export const profilesResolvers = {
         to,
       };
       try {
-        const profile: any = await Profile.findOne({ id: user.id });
+        const profile: any = await Profile.findOne({ user: user.id });
         profile.education.unshift(newEdu);
         return await profile.save();
       } catch (err) {
@@ -145,8 +149,9 @@ export const profilesResolvers = {
     createExperience: async (
       _: any,
       { input: { company, current, description, from, location, title, to } }: any,
-      { user }: any
+      context: any
     ): Promise<any> => {
+      const user: any = checkAuth(context);
       const newExp = {
         company,
         current,
@@ -157,10 +162,9 @@ export const profilesResolvers = {
         to,
       };
       try {
-        const getprofile: any = await Profile.findOne({ id: user.id });
-        // @ts-ignore
-        getprofile.experience.unshift(newExp);
-        return await getprofile.save();
+        const profile: any = await Profile.findOne({ user: user.id });
+        profile.experience.unshift(newExp);
+        return await profile.save();
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
