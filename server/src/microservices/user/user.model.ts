@@ -1,9 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const userSchema: mongoose.Schema<any> = new Schema(
+const userSchema: mongoose.Schema<any> = new mongoose.Schema(
   {
     username: {
       required: true,
@@ -30,32 +28,29 @@ const userSchema: mongoose.Schema<any> = new Schema(
   { timestamps: true }
 );
 
-userSchema.set('toObject', { getters: true, virtuals: true });
-
-userSchema.pre('save', async function(this: any, next: () => {}) {
+userSchema.pre('save', function preSave(this: any, next: () => {}) {
   if (!this.isModified('password')) {
-    try {
-      const salt = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, salt);
-    } catch (err) {
-      // @ts-ignore
-      next(err);
-    }
+    next();
+  } else {
+    bcrypt
+      .genSalt(10)
+      .then(salt => bcrypt.hash(this.password, salt))
+      .then(hash => {
+        this.password = hash;
+        next();
+      })
+      .catch(next);
   }
-  next();
 });
 
-userSchema.methods.checkPassword = function(this: any, password: string) {
-  const passwordHash = this.password;
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(password, passwordHash, (err, same) => {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve(same);
-    });
-  });
-};
+userSchema.method('comparePassword', function comparePassword(this: any, candidate: string) {
+  if (!this.password) {
+    throw new Error('User has not been configured with a password.');
+  }
+  if (!candidate) {
+    return false;
+  }
+  return bcrypt.compare(candidate, this.password);
+});
 
 export const User: mongoose.Model<mongoose.Document, {}> = mongoose.model('user', userSchema);

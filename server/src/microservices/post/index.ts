@@ -1,18 +1,22 @@
 import { buildFederatedSchema } from '@apollo/federation';
-import { ApolloServer, gql } from 'apollo-server';
-import { resolver } from './post.resolvers';
+import { ApolloServer } from 'apollo-server';
+import { serverConfig } from '../../serverConfig';
+import { connect } from '../../serverConfig/db';
+import { resolvers } from './post.resolvers';
 import { typeDefs } from './post.typeDefs';
 
-const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      // @ts-ignore
-      resolver,
-      typeDefs,
-    },
-  ]),
-});
+(async () => {
+  const server = new ApolloServer({
+    schema: buildFederatedSchema([
+      {
+        // @ts-ignore
+        resolvers,
+        typeDefs,
+      },
+    ]),
+  });
 
-server.listen({ port: 7002 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+  await connect(serverConfig.mongoDbUrl);
+  const { url } = await server.listen({ port: 7002 });
+  console.log(`🚀 Post server ready at ${url}`);
+})();

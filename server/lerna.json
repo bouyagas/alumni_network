@@ -1,4 +1,4 @@
 {
-  "packages": ["./src/services/*"],
+  "packages": ["./src/microservices/*"],
   "version": "independent"
 }

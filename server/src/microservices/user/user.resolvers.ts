@@ -1,62 +1,68 @@
-import { AuthenticationError } from 'apollo-server';
-import config from 'config';
-import gravatar from 'gravatar';
-import jwt from 'jsonwebtoken';
+import { AuthenticationError, UserInputError } from 'apollo-server';
+import * as gravatar from 'gravatar';
+import { authenticated, createToken } from '../../utils/auth';
+import { validateSignInInput, validateSignUpInput } from '../../utils/validators';
 import { User } from './user.model';
 
-export const resolver = {
+export const resolvers = {
   Query: {
-    me: async (_: any, args: string, ctx: any): Promise<void> => {
-      try {
-        if (!ctx.user) {
-          throw new AuthenticationError('Invalid Credentials');
-        }
-        return await ctx.user;
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
-      }
-    },
+    me: authenticated(async (_: any, { id }: any, ___: any) => {
+      return await User.findOne({ id });
+    }),
   },
-
   Mutation: {
-    signin: async (_: any, args: any, ctx: any): Promise<void> => {
+    signin: async (
+      _: any,
+      { input: { username, password, email } }: any,
+      ___: any
+    ): Promise<any> => {
       try {
-        const { email } = args;
-        ctx.user = await User.findOne({ where: { email } });
+        const { errors, valid } = validateSignInInput(username, email, password);
 
-        if (!ctx.user) {
-          throw new AuthenticationError('No user with that email');
+        if (!valid) {
+          throw new UserInputError('Errors', { errors });
         }
 
-        const payload = {
-          user: {
-            id: ctx.user.id,
-          },
-        };
-        jwt.sign(
-          payload,
-          config.get('jwtSecret.jwt'),
-          { expiresIn: 360000 },
-          (err: any, token: string): string => {
-            if (err) {
-              throw err;
-            }
-            return token;
-          }
-        );
+        const user: any = await User.findOne({ email });
+
+        if (!user) {
+          errors.general = 'User not found';
+          throw new UserInputError('User not found', { errors });
+        }
+
+        const match: boolean = await user.comparePassword(password);
+
+        if (!match) {
+          errors.general = 'Wrong crendetials';
+          throw new UserInputError('Wrong crendetials', { errors });
+        }
+        const token = createToken(user);
+
+        return { token, user };
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
 
-    signup: async (_: any, { username, email, password }: any, ctx: any): Promise<void> => {
+    signup: async (
+      _: any,
+      { input: { username, email, password, confirmPassword } }: any,
+      ___: any
+    ): Promise<any> => {
       try {
-        let user = await User.findOne({ where: { email } });
+        const { valid, errors } = validateSignUpInput(username, email, password, confirmPassword);
+        if (!valid) {
+          throw new UserInputError('Errors', { errors });
+        }
+        const existingUser = await User.findOne({ email });
 
-        if (user) {
-          throw new AuthenticationError('User already exists');
+        if (existingUser) {
+          throw new UserInputError('Email is taken', {
+            errors: {
+              email: 'User already exists',
+            },
+          });
         }
 
         const avatar = gravatar.url(email, {
@@ -65,51 +71,33 @@ export const resolver = {
           s: '200',
         });
 
-        user = await User.create({ username, email, password, avatar });
-
-        const payload = {
-          user: {
-            id: user.id,
-          },
-        };
-
-        jwt.sign(
-          payload,
-          config.get('jwtSecret.jwt'),
-          { expiresIn: 360000 },
-          (err: any, token: string): string => {
-            if (err) {
-              throw err;
-            }
-            return token;
-          }
-        );
+        const user: any = await User.create({ username, email, password, avatar });
+        const token = createToken(user);
+        return { token, user };
       } catch (err) {
-        console.error(err.message);
+        console.error(`mongodb cool ${err.message}`);
         throw new AuthenticationError(err.message);
       }
     },
 
-    updateMe: async (_: any, args: any, ctx: any): Promise<void> => {
-      try {
-        if (!ctx.user) {
-          throw new AuthenticationError('Invalid Credentials');
+    updateMe: authenticated(
+      async (_: any, { input }: any, { user }: any): Promise<any> => {
+        try {
+          return await User.findByIdAndUpdate(user.id, input, { new: true })
+            .select('-password')
+            .lean()
+            .exec();
+        } catch (err) {
+          console.error(err.message);
+          throw new AuthenticationError(err.message);
         }
-
-        return await User.findByIdAndUpdate(ctx.user._id, args.input, { new: true })
-          .select('-password')
-          .lean()
-          .exec();
-      } catch (err) {
-        console.error(err.message);
-        throw new AuthenticationError(err.message);
       }
-    },
+    ),
   },
 
   User: {
-    __resolveReference(user: any) {
-      return User.findById(user.id);
+    __resolveReference: async (_: any, { user }: any) => {
+      return await User.findOne({ id: user.id });
     },
   },
 };

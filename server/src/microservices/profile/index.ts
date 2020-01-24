@@ -1,18 +1,32 @@
 import { buildFederatedSchema } from '@apollo/federation';
-import { ApolloServer, gql } from 'apollo-server';
-import { resolver } from './profile.resolvers';
+import { ApolloServer } from 'apollo-server';
+import { serverConfig } from '../../serverConfig';
+import {Profile} from './profile.model'
+import {  getUserFromToken } from '../../utils/auth';
+import { connect } from '../../serverConfig/db';
+import { resolvers } from './profile.resolvers';
 import { typeDefs } from './profile.typeDefs';
 
-const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      // @ts-ignore
-      resolver,
-      typeDefs,
+(async () => {
+  const server = new ApolloServer({
+     context: ({ req }) => {
+      const token = req.headers.authorization;
+      const user = getUserFromToken(token);
+      return {
+        models: { Profile },
+        user,
+      };
     },
-  ]),
-});
+    schema: buildFederatedSchema([
+      {
+        // @ts-ignore
+        resolvers,
+        typeDefs,
+      },
+    ]),
+  });
 
-server.listen({ port: 7003 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+  await connect(serverConfig.mongoDbUrl);
+  const { url } = await server.listen({ port: 7003 });
+  console.log(`🚀 Profile server ready at ${url}`);
+})();

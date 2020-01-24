@@ -1,24 +1,39 @@
-import { ApolloGateway } from '@apollo/gateway';
+import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server';
 import { serverConfig } from './serverConfig';
-import { connect } from './serverConfig/db';
-
+import { getUserFromToken } from './utils/auth';
+class AuthenticatedDataSource extends RemoteGraphQLDataSource {
+  public willSendRequest({ request, context }: any): void {
+    request.http.headers.set('Authorization', context.user);
+  }
+}
 export const gateway = new ApolloGateway({
   serviceList: [
-    { name: 'users', url: 'http://localhost:7001/graphql' },
-    { name: 'posts', url: 'http://localhost:7002/graphql' },
-    { name: 'profiles', url: 'http://localhost:7003/graphql' },
+    { name: 'user', url: 'http://localhost:7001/graphql' },
+    { name: 'post', url: 'http://localhost:7002/graphql' },
+    { name: 'profile', url: 'http://localhost:7003/graphql' },
   ],
+  buildService({ url }: any) {
+    return new AuthenticatedDataSource({ url });
+  },
 });
 
 (async () => {
   const { schema, executor } = await gateway.load();
-
   const server = new ApolloServer({
+    context: ({ req }) => {
+      const token = req.headers.authorization;
+      console.log('token cool ' + token);
+      const user: any = getUserFromToken(token);
+      console.log(user);
+      return { user };
+    },
     executor,
     schema,
+    subscriptions: false,
+    tracing: true,
   });
-  await connect(serverConfig.mongoDbUrl);
+
   const { url } = await server.listen({ port: serverConfig.port });
-  console.log(`GQL 🚀 Server ready at ${url}`);
+  console.log(`GQL 🚀 Gateway server ready at ${url}`);
 })();
