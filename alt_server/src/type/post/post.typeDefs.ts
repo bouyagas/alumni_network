@@ -3,35 +3,37 @@ import { gql } from 'apollo-server';
 export const postsTypeDefs = gql`
   type Post {
     id: ID!
-    name: User!
+    username: String
     text: String!
+    avatar: String
     comments: [Comment]!
   }
 
   type Comment {
-    user: User!
+    username: String
     text: String!
+    avatar: String
   }
 
   input CommentInput {
-    name: String
+    username: String
     text: String!
     avatar: String
   }
 
   input NewPostInput {
     text: String!
-    name: String
+    username: String
     avatar: String
   }
 
   extend type Query {
-    post: Post!
+    post(id: ID!): Post!
     posts: [Post]!
   }
 
   extend type Mutation {
-    newComment(input: CommentInput!): Comment!
+    newComment(input: CommentInput!): Post!
     newPost(input: NewPostInput!): Post!
     removePost(id: ID!): Post!
   }

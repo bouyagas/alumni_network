@@ -92,7 +92,7 @@ export const profilesTypeDefs = gql`
 
   extend type Mutation {
     updateAndCreateProfile(input: UpdateAndCreateProfileInput!): Profile!
-    createEducation(input: CreateEducationInput!): Education!
-    createExperience(input: CreateExperienceInput): Experience!
+    createEducation(input: CreateEducationInput!): Profile!
+    createExperience(input: CreateExperienceInput): Profile!
   }
 `;

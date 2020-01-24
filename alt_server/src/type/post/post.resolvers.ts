@@ -1,26 +1,27 @@
 import { AuthenticationError } from 'apollo-server';
 import { checkAuth } from '../../utils/auth';
+import { User } from '../user/user.model';
 import { Post } from './post.model';
 
 export const postsResolvers = {
   Query: {
-    post: async (_: any, { id }: any, { user }: any): Promise<any> => {
+    post: async (_: any, { id }: any, ___: any): Promise<any> => {
       try {
-        const post: any = await Post.findById({ id, user: user.id }).sort({
-          created_at: -1,
-        });
-        return { post };
+        const post: any = await Post.findById({ _id: id });
+        return post;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    posts: async (_: any, __: any, { user }: any): Promise<any> => {
+
+    posts: async (_: any, __: any, context: any): Promise<any> => {
       try {
-        const posts: any = await Post.find({ id: user.id })
+        const user: any = checkAuth(context);
+        const posts: any = await Post.find({ user: user.id })
           .sort({ created_at: -1 })
           .exec();
-        return { posts };
+        return posts;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -29,45 +30,52 @@ export const postsResolvers = {
   },
   // tslint:disable-next-line: object-literal-sort-keys
   Mutation: {
-    newComment: async (_: any, { text }: any, { user }: any): Promise<any> => {
+    newComment: async (_: any, { input }: any, context: any): Promise<any> => {
       try {
-        const post: any = await Post.findById({ id: user.id });
+        const usertoken: any = checkAuth(context);
+        const user: any = await User.findById(usertoken.id).select('-password');
+        const post: any = await Post.findOne({ user: user.id });
 
         const newComment = {
           avatar: user.avatar,
-          name: user.username,
-          text,
-          user: user.id,
+          text: input.text,
+          user: usertoken.id,
+          username: user.username,
         };
 
         post.comments.unshift(newComment);
         await post.save();
-        return { post };
+        return post;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    newPost: async (_: any, { text }: any, context: any): Promise<any> => {
+
+    newPost: async (_: any, { input }: any, context: any): Promise<any> => {
       try {
-        const user: any = checkAuth(context);
-        console.log(user);
+        const usertoken: any = checkAuth(context);
+        console.log(usertoken.username);
+        const user: any = await User.findById(usertoken.id).select('-password');
         const createPost: any = new Post({
           avatar: user.avatar,
-          name: user.username,
-          text,
-          user: user.id,
+          text: input.text,
+          user: usertoken.id,
+          username: user.username,
         });
 
         const newPost = await createPost.save();
-        return { newPost };
+
+        return newPost;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
       }
     },
-    removePost: async (_: any, { id }: any, { user }: any): Promise<void> => {
+
+    removePost: async (_: any, { id }: any, context: any): Promise<void> => {
       try {
+        const user: any = checkAuth(context);
         const post: any = await Post.findByIdAndRemove({ id, user: user.id });
 
         if (!post) {

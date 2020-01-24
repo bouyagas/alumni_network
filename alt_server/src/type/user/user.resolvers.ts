@@ -7,9 +7,14 @@ import { User } from './user.model';
 export const usersResolvers = {
   Query: {
     me: async (_: any, ___: any, context: any) => {
-      const user: any = checkAuth(context);
-      console.log(user);
-      return await user;
+      try {
+        const user: any = checkAuth(context);
+        console.log(user.id);
+        return await User.findOne({ _id: user.id });
+      } catch (err) {
+        console.error(err.message);
+        throw new AuthenticationError(err.message);
+      }
     },
   },
 
@@ -86,7 +91,7 @@ export const usersResolvers = {
     updateMe: async (_: any, { input }: any, context: any): Promise<any> => {
       try {
         const user: any = checkAuth(context);
-        return await User.findOneAndUpdate(user.id, input, { new: true })
+        return await User.findOneAndUpdate({ _id: user.id }, input, { new: true })
           .select('-password')
           .lean()
           .exec();

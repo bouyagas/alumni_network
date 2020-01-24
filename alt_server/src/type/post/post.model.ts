@@ -8,8 +8,7 @@ const PostSchema: mongoose.Schema<any> = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
     },
 
-    name: {
-      required: true,
+    username: {
       type: String,
     },
 
@@ -29,7 +28,7 @@ const PostSchema: mongoose.Schema<any> = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
         },
 
-        name: {
+        username: {
           type: String,
         },
 

@@ -7,13 +7,15 @@ export const profilesResolvers = {
     profile: async (_: any, __: any, context: any): Promise<any> => {
       try {
         const user: any = checkAuth(context);
-        const profile: any = await Profile.findOne({
-          user: user.id,
-        }).populate('user', ['username', 'avatar']);
+        const profile: any = await Profile.findOne({ user: user.id }).populate('user', [
+          'username',
+          'avatar',
+          'email',
+        ]);
         if (!profile) {
           throw new AuthenticationError('There is no profile for this user');
         }
-        return profile.exec().lean();
+        return profile;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -22,10 +24,10 @@ export const profilesResolvers = {
 
     profiles: async (_: any, __: any, ___: any): Promise<any> => {
       try {
-        const profiles: any = await Profile.findOne({})
-          .populate('user', ['username', 'avatar'])
-          .exec();
-        return { profiles };
+        const profiles: any[] = await Profile.find({})
+          .populate('user', ['username', 'avatar', 'email'])
+          .sort({ createdA: -1 });
+        return profiles;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -139,7 +141,8 @@ export const profilesResolvers = {
       try {
         const profile: any = await Profile.findOne({ user: user.id });
         profile.education.unshift(newEdu);
-        return await profile.save();
+        const edu = await profile.save();
+        return edu;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
@@ -164,7 +167,8 @@ export const profilesResolvers = {
       try {
         const profile: any = await Profile.findOne({ user: user.id });
         profile.experience.unshift(newExp);
-        return await profile.save();
+        const exp = await profile.save();
+        return exp;
       } catch (err) {
         console.error(err.message);
         throw new AuthenticationError(err.message);
