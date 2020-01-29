@@ -12,7 +12,7 @@ export const usersTypeDefs = gql`
     token: String!
     user: User
   }
-  input SignUpInput {
+  input RegisterInput {
     username: String!
     email: String!
     avatar: String
@@ -20,7 +20,7 @@ export const usersTypeDefs = gql`
     confirmPassword: String!
   }
 
-  input SignInInput {
+  input LoginInput {
     username: String!
     email: String!
     password: String!
@@ -36,8 +36,8 @@ export const usersTypeDefs = gql`
   }
 
   type Mutation {
-    signup(input: SignUpInput!): AuthUser!
-    signin(input: SignInInput!): AuthUser!
+    register(input: RegisterInput!): AuthUser!
+    login(input: LoginInput!): AuthUser!
     updateMe(input: UpdateUserInput!): User
   }
 `;

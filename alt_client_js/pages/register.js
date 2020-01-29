@@ -1,4 +1,7 @@
+// @ts-nocheck
 import React from 'react';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 import { makeStyles } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Icon from '@material-ui/core/Icon';
@@ -17,18 +20,81 @@ import CardFooter from '../components/Card/CardFooter';
 import CustomInput from '../components/CustomInput/CustomInput';
 
 import styles from '../assets/jss/nextjs-material-kit/pages/loginPage';
-
-// @ts-ignore
-import image from '../assets/img/bg7.jpg';
+import image from '../assets/img/register_user.jpeg';
 
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-export default function SignUpPage(props) {
+const Register_User = gql`
+  mutation RegisterUser(
+    $username: String!
+    $email: String!
+    $password: String!
+    $comfirmPassword: String!
+  ) {
+    register(
+      input: {
+        username: $username
+        email: $email
+        password: $password
+        comfirmPassword: $comfirmPassword
+      }
+    ) {
+      token
+      user {
+        username
+        email
+        avatar
+      }
+    }
+  }
+`;
+
+export default function RegisterPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState('cardHidden');
+  const [username, setUsername] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [comfirmPassword, setComfirmPassword] = React.useState('');
+
+  const handleChangeUsername = event => {
+    setUsername(event.target.value);
+  };
+
+  const handleChangeEmail = event => {
+    setEmail(event.target.value);
+  };
+
+  const handleChangePassword = event => {
+    setPassword(event.target.value);
+  };
+  const handleChangeComfirmPassword = event => {
+    setComfirmPassword(event.target.value);
+  };
+
+  const onSubmit = event => {
+    event.preventDefault();
+    registerUser();
+  };
+
+  const [registerUser, { loading, error, data }] = useMutation(Register_User, {
+    update(proxy, result) {
+      console.log(result);
+    },
+    variables: {
+      input: {
+        username,
+        email,
+        password,
+        comfirmPassword
+      }
+    }
+  });
+
   setTimeout(function() {
     setCardAnimation('');
   }, 700);
+
   const classes = useStyles();
   const { ...rest } = props;
   return (
@@ -54,7 +120,7 @@ export default function SignUpPage(props) {
               <Card className={classes[cardAnimaton]}>
                 <form className={classes.form}>
                   <CardHeader color='primary' className={classes.cardHeader}>
-                    <h4>Sign Up</h4>
+                    <h4>Regisger</h4>
                     <div className={classes.socialLine}>
                       <Button
                         justIcon
@@ -88,13 +154,16 @@ export default function SignUpPage(props) {
                   <p className={classes.divider}>Or Be Classical</p>
                   <CardBody>
                     <CustomInput
-                      labelText='First Name...'
+                      labelText='Username...'
                       id='first'
                       formControlProps={{
                         fullWidth: true
                       }}
                       inputProps={{
                         type: 'text',
+                        name: 'username',
+                        value: { username },
+                        onChange: { handleChangeUsername },
                         endAdornment: (
                           <InputAdornment position='end'>
                             <People className={classes.inputIconsColor} />
@@ -110,6 +179,8 @@ export default function SignUpPage(props) {
                       }}
                       inputProps={{
                         type: 'email',
+                        value: { email },
+                        onChange: { handleChangeEmail },
                         endAdornment: (
                           <InputAdornment position='end'>
                             <Email className={classes.inputIconsColor} />
@@ -125,6 +196,8 @@ export default function SignUpPage(props) {
                       }}
                       inputProps={{
                         type: 'password',
+                        value: { password },
+                        onChange: { handleChangePassword },
                         endAdornment: (
                           <InputAdornment position='end'>
                             <Icon className={classes.inputIconsColor}>
@@ -143,6 +216,8 @@ export default function SignUpPage(props) {
                       }}
                       inputProps={{
                         type: 'password',
+                        value: { comfirmPassword },
+                        onChange: { handleChangeComfirmPassword },
                         endAdornment: (
                           <InputAdornment position='end'>
                             <Icon className={classes.inputIconsColor}>

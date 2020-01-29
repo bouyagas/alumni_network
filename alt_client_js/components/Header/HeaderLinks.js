@@ -36,7 +36,7 @@ export default function HeaderLinks(props) {
               <a className={classes.dropdownLink}>Student Network</a>
             </Link>,
             <a
-              href='https://creativetimofficial.github.io/nextjs-material-kit/#/documentation?ref=njsmk-navbar'
+              href='/recentGraduates'
               target='_blank'
               className={classes.dropdownLink}
             >
@@ -54,33 +54,29 @@ export default function HeaderLinks(props) {
       </ListItem>
       <ListItem className={classes.listItem}>
         <Tooltip
-          id='instagram-facebook'
-          title='Sign In'
+          id='instagram-tooltip'
+          title='Register'
           placement={'top'}
           classes={{ tooltip: classes.tooltip }}
         >
           <Button
             color='transparent'
-            href='/signIn'
+            href='/register'
             className={classes.navLink}
           >
-            <i className={classes.socialIcons + ' fas fa-sign-in-alt'} />
+            <i className={classes.socialIcons + ' fas fa-user-plus'} />
           </Button>
         </Tooltip>
       </ListItem>
       <ListItem className={classes.listItem}>
         <Tooltip
-          id='instagram-tooltip'
-          title='Sign Up To A Member'
+          id='instagram-facebook'
+          title='Login'
           placement={'top'}
           classes={{ tooltip: classes.tooltip }}
         >
-          <Button
-            color='transparent'
-            href='/signUp'
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + ' fas fa-user-plus'} />
+          <Button color='transparent' href='/login' className={classes.navLink}>
+            <i className={classes.socialIcons + ' fas fa-sign-in-alt'} />
           </Button>
         </Tooltip>
       </ListItem>

@@ -1,15 +1,14 @@
-import React from "react";
+import React from 'react';
 // nodejs library to set properties for components
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 // nodejs library that concatenates classes
-import classNames from "classnames";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
 
-import styles from "assets/jss/nextjs-material-kit/components/customInputStyle.js";
+import styles from '../../assets/jss/nextjs-material-kit/components/customInputStyle';
 
 const useStyles = makeStyles(styles);
 
@@ -28,22 +27,26 @@ export default function CustomInput(props) {
   } = props;
 
   const labelClasses = classNames({
-    [" " + classes.labelRootError]: error,
-    [" " + classes.labelRootSuccess]: success && !error
+    [' ' + classes.labelRootError]: error,
+    [' ' + classes.labelRootSuccess]: success && !error
   });
+
   const underlineClasses = classNames({
     [classes.underlineError]: error,
     [classes.underlineSuccess]: success && !error,
     [classes.underline]: true,
     [classes.whiteUnderline]: white
   });
+
   const marginTop = classNames({
     [inputRootCustomClasses]: inputRootCustomClasses !== undefined
   });
+
   const inputClasses = classNames({
     [classes.input]: true,
     [classes.whiteInput]: white
   });
+
   var formControlClasses;
   if (formControlProps !== undefined) {
     formControlClasses = classNames(
@@ -57,7 +60,7 @@ export default function CustomInput(props) {
     <FormControl {...formControlProps} className={formControlClasses}>
       {labelText !== undefined ? (
         <InputLabel
-          className={classes.labelRoot + " " + labelClasses}
+          className={classes.labelRoot + ' ' + labelClasses}
           htmlFor={id}
           {...labelProps}
         >

@@ -20,7 +20,7 @@ export const usersResolvers = {
 
   // tslint:disable-next-line: object-literal-sort-keys
   Mutation: {
-    signin: async (
+    login: async (
       _: any,
       { input: { username, password, email } }: any,
       ___: any
@@ -54,7 +54,7 @@ export const usersResolvers = {
       }
     },
 
-    signup: async (
+    register: async (
       _: any,
       { input: { username, email, password, confirmPassword } }: any,
       ___: any

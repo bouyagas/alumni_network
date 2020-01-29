@@ -18,12 +18,12 @@ import CustomInput from '../components/CustomInput/CustomInput';
 import styles from '../assets/jss/nextjs-material-kit/pages/loginPage';
 
 //@ts-ignore
-import image from '../assets/img/bg7.jpg';
+import image from '../assets/img/login_user.jpeg';
 
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-export default function SignInPage(props) {
+export default function LoginPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState('cardHidden');
   setTimeout(function() {
     setCardAnimation('');

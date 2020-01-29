@@ -11,7 +11,7 @@ import { landingPageStyle } from '../assets/jss/nextjs-material-kit/pages/landin
 import TopAlumniSection from '../pages-sections/LandingPage-Sections/TopAlumniSection';
 import WorkSection from '../pages-sections/LandingPage-Sections/WorkSection.js';
 // @ts-ignore
-import landingPic from '../assets/img/alumni_network.jpg';
+import landingPic from '../assets/img/cool_alumni.jpg';
 
 const dashboardRoutes = [];
 
