@@ -1,23 +1,19 @@
-/*eslint-disable*/
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
+import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Tooltip from '@material-ui/core/Tooltip';
 
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Tooltip from "@material-ui/core/Tooltip";
-
-// @material-ui/icons
-import { Apps, CloudDownload } from "@material-ui/icons";
-import DeleteIcon from "@material-ui/icons/Delete";
-import IconButton from "@material-ui/core/IconButton";
+import { Apps, CloudDownload } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 
 // core components
-import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
-import Button from "components/CustomButtons/Button.js";
+import CustomDropdown from '../CustomDropdown/CustomDropdown';
+import Button from '../CustomButtons/Button';
 
-import styles from "assets/jss/nextjs-material-kit/components/headerLinksStyle.js";
+import styles from '../../assets/jss/nextjs-material-kit/components/headerLinksStyle';
 
 const useStyles = makeStyles(styles);
 
@@ -29,35 +25,25 @@ export default function HeaderLinks(props) {
         <CustomDropdown
           noLiPadding
           navDropdown
-          buttonText="Components"
+          buttonText='Veiw Alumni Students'
           buttonProps={{
             className: classes.navLink,
-            color: "transparent"
+            color: 'transparent'
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link href="/components">
-              <a className={classes.dropdownLink}>All components</a>
+            <Link href='/studentNetwork' as='/feeds'>
+              <a className={classes.dropdownLink}>Student Network</a>
             </Link>,
             <a
-              href="https://creativetimofficial.github.io/nextjs-material-kit/#/documentation?ref=njsmk-navbar"
-              target="_blank"
+              href='https://creativetimofficial.github.io/nextjs-material-kit/#/documentation?ref=njsmk-navbar'
+              target='_blank'
               className={classes.dropdownLink}
             >
-              Documentation
+              Recent Graduates
             </a>
           ]}
         />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          href="https://www.creative-tim.com/product/nextjs-material-kit?ref=njsmk-navbar"
-          color="transparent"
-          target="_blank"
-          className={classes.navLink}
-        >
-          <CloudDownload className={classes.icons} /> Download
-        </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
         {/*<Tooltip title="Delete">
@@ -65,53 +51,36 @@ export default function HeaderLinks(props) {
             <DeleteIcon />
           </IconButton>
         </Tooltip>*/}
+      </ListItem>
+      <ListItem className={classes.listItem}>
         <Tooltip
-          id="instagram-twitter"
-          title="Follow us on twitter"
-          placement={"top"}
+          id='instagram-facebook'
+          title='Sign In'
+          placement={'top'}
           classes={{ tooltip: classes.tooltip }}
         >
           <Button
-            href="https://twitter.com/CreativeTim?ref=creativetim"
-            target="_blank"
-            color="transparent"
+            color='transparent'
+            href='/signIn'
             className={classes.navLink}
           >
-            <i className={classes.socialIcons + " fab fa-twitter"} />
+            <i className={classes.socialIcons + ' fas fa-sign-in-alt'} />
           </Button>
         </Tooltip>
       </ListItem>
       <ListItem className={classes.listItem}>
         <Tooltip
-          id="instagram-facebook"
-          title="Follow us on facebook"
-          placement={"top"}
+          id='instagram-tooltip'
+          title='Sign Up To A Member'
+          placement={'top'}
           classes={{ tooltip: classes.tooltip }}
         >
           <Button
-            color="transparent"
-            href="https://www.facebook.com/CreativeTim?ref=creativetim"
-            target="_blank"
+            color='transparent'
+            href='/signUp'
             className={classes.navLink}
           >
-            <i className={classes.socialIcons + " fab fa-facebook"} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-tooltip"
-          title="Follow us on instagram"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.instagram.com/CreativeTimOfficial?ref=creativetim"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-instagram"} />
+            <i className={classes.socialIcons + ' fas fa-user-plus'} />
           </Button>
         </Tooltip>
       </ListItem>

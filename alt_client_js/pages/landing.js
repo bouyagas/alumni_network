@@ -1,33 +1,26 @@
 import React from 'react';
-// nodejs library that concatenates classes
 import classNames from 'classnames';
-// @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
-
-// @material-ui/icons
-
-// core components
 import Header from '../components/Header/Header.js';
 import Footer from '../components/Footer/Footer.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
-import Button from '../components/CustomButtons/Button.js';
 import HeaderLinks from '../components/Header/HeaderLinks.js';
 import Parallax from '../components/Parallax/Parallax.js';
-
 import { landingPageStyle } from '../assets/jss/nextjs-material-kit/pages/landingPage.js';
-
-// Sections for this page
-import ProductSection from '../pages-sections/LandingPage-Sections/ProductSection.js';
-import TeamSection from '../pages-sections/LandingPage-Sections/TeamSection.js';
+import TopAlumniSection from '../pages-sections/LandingPage-Sections/TopAlumniSection';
 import WorkSection from '../pages-sections/LandingPage-Sections/WorkSection.js';
-
 // @ts-ignore
-import landingPic from '../assets/img/landing-bg.jpg';
+import landingPic from '../assets/img/alumni_network.jpg';
+
 const dashboardRoutes = [];
 
 // @ts-ignore
 const useStyles = makeStyles(landingPageStyle);
+
+/**
+ * @param {{ [x: string]: any; }} props
+ */
 
 export default function LandingPage(props) {
   const classes = useStyles();
@@ -36,6 +29,7 @@ export default function LandingPage(props) {
     <div>
       <Header
         color='transparent'
+        // @ts-ignore
         routes={dashboardRoutes}
         brand='The Alumni Network'
         rightLinks={<HeaderLinks />}
@@ -55,32 +49,20 @@ export default function LandingPage(props) {
               sm={12}
               md={6}
             >
-              <h1 className={classes.title}>Your Story Starts With Us.</h1>
+              <h1 className={classes.title}>Share Your Coding Experience</h1>
               <h4>
-                Every landing page needs a small description after the big bold
-                title, that{"'"}s why we added this text here. Add here all the
-                information that can make you or your product create the first
-                impression.
+                Alumni Network is a platform that allowed students who were
+                graduated from different bootcamp to stay connected and share
+                experience with fellow student.
               </h4>
               <br />
-              <Button
-                color='danger'
-                size='lg'
-                href='https://www.youtube.com/watch?v=dQw4w9WgXcQ&ref=creativetim'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <i className='fas fa-play' />
-                Watch video
-              </Button>
             </GridItem>
           </GridContainer>
         </div>
       </Parallax>
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
-          <ProductSection />
-          <TeamSection />
+          <TopAlumniSection />
           <WorkSection />
         </div>
       </div>
