@@ -67,7 +67,7 @@ export default function ProfilePage(props) {
         small
         filter
         image={require(// @ts-ignore
-        'assets/img/profile-bg.jpg')}
+        '../assets/img/profile-bg.jpg')}
       />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div>

@@ -16,12 +16,15 @@ export default function WorkSection() {
     <div className={classes.section}>
       <GridContainer justify='center'>
         <GridItem cs={12} sm={12} md={8}>
-          <h2 className={classes.title}>Work with us</h2>
+          <h2 className={classes.title}>Ready For A Coding Bootcamp</h2>
           <h4 className={classes.description}>
-            Divide details about your product or agency work into parts. Write a
-            few lines about each one and contact us about any further
-            collaboration. We will responde get back to you in a couple of
-            hours.
+            The decision to enroll in a coding Bootcamp is a life-changing one.
+            Bootcamps are fast tracks to coding success, but they also require
+            some preparation. Before jumping into a course, make sure you’ve
+            prepared for all of the followings. Choosing the right coding boot
+            camp is a big decision. We want to help you to narrow down your
+            options and Then check out the best coding boot that's camps suits
+            you
           </h4>
           <form>
             <GridContainer>

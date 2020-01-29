@@ -15,12 +15,12 @@ import CardBody from '../components/Card/CardBody';
 import CardHeader from '../components/Card/CardHeader';
 import CardFooter from '../components/Card/CardFooter';
 import CustomInput from '../components/CustomInput/CustomInput';
-
 import styles from '../assets/jss/nextjs-material-kit/pages/loginPage';
 
 //@ts-ignore
 import image from '../assets/img/bg7.jpg';
 
+// @ts-ignore
 const useStyles = makeStyles(styles);
 
 export default function SignInPage(props) {
@@ -136,8 +136,8 @@ export default function SignInPage(props) {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button simple color='primary' size='lg'>
-                      Get started
+                    <Button simple color='primary' size='lg' href='/profile'>
+                      Sign In
                     </Button>
                   </CardFooter>
                 </form>

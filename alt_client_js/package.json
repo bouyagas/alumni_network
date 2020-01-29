@@ -1,38 +1,20 @@
 {
-  "name": "alt_client",
+  "name": "alt_client_js",
   "version": "1.0.0",
   "description": "The frontend of alumni network app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
     "build": "next build",
     "start": "next start",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && npm run dev"
   },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "keywords": [
-    "next",
-    "nextjs",
-    "react",
-    "reactjs",
-    "npx",
-    "material",
-    "material-design",
-    "material-kit",
-    "material-kit-react",
-    "next-material-kit"
-  ],
   "author": "Mohamed Gassama",
   "license": "MIT",
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
     "@apollo/react-ssr": "^3.1.3",
-    "@material-ui/core": "4.9.0",
-    "@material-ui/icons": "4.5.1",
+    "@material-ui/icons": "^4.5.1",
     "@zeit/next-sass": "1.0.1",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",

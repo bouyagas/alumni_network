@@ -57,15 +57,17 @@ export default function TopAlumniSection() {
                 Gigi Hadid
                 <br />
                 <small className={classes.smallTitle}>
-                  Front-End Developer/Designer
+                  Frontend Developer/Designer
                 </small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href='#pablo'>links</a> for people to be able to
-                  follow them outside the site.
+                  Frontend Developer with experience architecting and developing
+                  complex fast web application with SDLC best practices in
+                  React, Redux, JavaScript, Rails, jQuery, Ruby, Sinatra, Ruby
+                  on Rails, Github, HTML, Nokogiri, RESTful API, SQL, JSON, and
+                  Rack. I believe in giving back to the community and helping
+                  others.
                 </p>
               </CardBody>
               <CardFooter className={classes.justifyCenter}>
@@ -113,15 +115,16 @@ export default function TopAlumniSection() {
                 Christian Louboutin
                 <br />
                 <small className={classes.smallTitle}>
-                  Full-Stack Developer
+                  Fullstack Developer
                 </small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href='#pablo'>links</a> for people to be able to
-                  follow them outside the site.
+                  Former Business Analyst turned Fullstack Engineer. Past work
+                  experience, and exposure to different job roles has fueled my
+                  desire to switch to a more technical career and join a coding
+                  bootcamp. I am looking for a fulfilling career with many
+                  opportunities for continuous learning and self improvement.
                 </p>
               </CardBody>
               <CardFooter className={classes.justifyCenter}>
@@ -168,16 +171,15 @@ export default function TopAlumniSection() {
               <h4 className={classes.cardTitle}>
                 Tara Ojo
                 <br />
-                <small className={classes.smallTitle}>
-                  Back -End Developer
-                </small>
+                <small className={classes.smallTitle}>Backend Developer</small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href='#pablo'>links</a> for people to be able to
-                  follow them outside the site.
+                  Backend Developer with a passion for continuous learning and
+                  building a sophisticated web application. With experience in
+                  Ruby on Rails, JavaScript, React and CSS3 and background as a
+                  web designer, I discovered web development through utilizing
+                  my skill to visualize web apps.
                 </p>
               </CardBody>
               <CardFooter className={classes.justifyCenter}>

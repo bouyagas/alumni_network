@@ -22,7 +22,7 @@ const useStyles = makeStyles(landingPageStyle);
  * @param {{ [x: string]: any; }} props
  */
 
-export default function LandingPage(props) {
+export default function Home(props) {
   const classes = useStyles();
   const { ...rest } = props;
   return (
